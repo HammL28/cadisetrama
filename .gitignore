@@ -1,0 +1,15 @@
+node_modules/
+vendor/
+.env
+*.log
+storage/*.key
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/logs/*
+bootstrap/cache/*
+public/hot
+public/storage
+public/build
+npm-debug.log
+yarn-error.log
