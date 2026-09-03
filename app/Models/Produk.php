@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Produk extends Model
 {
@@ -19,6 +19,12 @@ class Produk extends Model
         'harga_beli',
         'harga_jual',
         'stok',
+    ];
+
+    protected $casts = [
+        'harga_beli' => 'integer',
+        'harga_jual' => 'integer',
+        'stok'       => 'integer',
     ];
 
     public function user()

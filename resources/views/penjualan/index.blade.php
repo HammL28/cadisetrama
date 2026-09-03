@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', __('sales_history') . ' - POS ILHAM')
+@section('title', 'Riwayat Penjualan - POS ILHAM')
 
 @section('content')
 
@@ -344,24 +344,24 @@
                 <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
                     <div class="date-badge">
                         <i class="bi bi-receipt"></i>
-                        <span>{{ __('sales_management') }}</span>
+                        <span>Kelola Penjualan</span>
                     </div>
                 </div>
                 <h1 class="fw-bold text-white mb-2 fs-2">
-                    {{ __('sales_history') }}
+                    Riwayat Penjualan
                 </h1>
-                <p class="text-white-50 mb-0 fs-6">{{ __('sales_management_subtitle') }}</p>
+                <p class="text-white-50 mb-0 fs-6">Pantau dan kelola seluruh riwayat transaksi penjualan toko Anda.</p>
             </div>
             <div class="col-lg-5 text-lg-end">
                 <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
                     <button onclick="window.print()" class="btn btn-outline-light rounded-pill px-3 shadow-sm fw-semibold d-inline-flex align-items-center gap-2">
                         <i class="bi bi-printer-fill"></i>
-                        <span>{{ __('print_data') }}</span>
+                        <span>Cetak Data</span>
                     </button>
 
                     <a href="{{ route('penjualan.create') }}" class="btn btn-light rounded-pill px-4 shadow-sm fw-bold d-inline-flex align-items-center gap-2" style="color: var(--text-heading) !important;">
                         <i class="bi bi-plus-circle-fill" style="color: var(--icon-color);"></i>
-                        <span>{{ __('add_new_sale') }}</span>
+                        <span>Tambah Penjualan Baru</span>
                     </a>
                 </div>
             </div>
@@ -375,8 +375,8 @@
                 <i class="bi bi-graph-up-arrow"></i>
             </div>
             <div>
-                <h2 class="h-title-main mb-0">{{ __('sales_summary_title') }}</h2>
-                <span class="h-title-sub">{{ __('sales_summary_subtitle') }}</span>
+                <h2 class="h-title-main mb-0">Ringkasan Penjualan</h2>
+                <span class="h-title-sub">Gambaran umum performa transaksi penjualan</span>
             </div>
         </div>
     </div>
@@ -388,7 +388,7 @@
                 <div class="card-top-accent"></div>
                 <div class="card-body p-0">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="h-metric-label">{{ __('total_transactions_summary') }}</span>
+                        <span class="h-metric-label">Total Transaksi</span>
                         <div class="icon-box-modern">
                             <i class="bi bi-box-seam"></i>
                         </div>
@@ -404,7 +404,7 @@
                 <div class="card-top-accent"></div>
                 <div class="card-body p-0">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="h-metric-label">{{ __('total_revenue_summary') }}</span>
+                        <span class="h-metric-label">Total Omset</span>
                         <div class="icon-box-modern">
                             <i class="bi bi-layers-fill"></i>
                         </div>
@@ -420,7 +420,7 @@
                 <div class="card-top-accent"></div>
                 <div class="card-body p-0">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="h-metric-label">{{ __('non_cash_summary') }}</span>
+                        <span class="h-metric-label">Transaksi Non-Tunai</span>
                         <div class="icon-box-modern" style="background-color: #fef3c7 !important; color: #d97706 !important; border-color: #fde68a !important;">
                             <i class="bi bi-exclamation-triangle-fill" style="color: #d97706 !important;"></i>
                         </div>
@@ -438,7 +438,7 @@
                 <div class="card-top-accent"></div>
                 <div class="card-body p-0">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="h-metric-label">{{ __('cash_payment_summary') }}</span>
+                        <span class="h-metric-label">Transaksi Tunai</span>
                         <div class="icon-box-modern" style="background-color: #ffe4e6 !important; color: #e11d48 !important; border-color: #fca5a5 !important;">
                             <i class="bi bi-x-circle-fill" style="color: #e11d48 !important;"></i>
                         </div>
@@ -462,27 +462,27 @@
                     <div class="col-12 col-md-4">
                         <div class="position-relative search-box">
                             <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3" style="color: var(--icon-color);"></i>
-                            <input type="text" name="search" value="{{ request('search') }}" class="form-control input-pill ps-5 py-2 bg-search" placeholder="{{ __('search_transaction') }}" style="border-color: #ddd6fe;">
+                            <input type="text" name="search" value="{{ request('search') }}" class="form-control input-pill ps-5 py-2 bg-search" placeholder="Cari transaksi..." style="border-color: #ddd6fe;">
                         </div>
                     </div>
 
                     <div class="col-12 col-md-8 d-flex flex-wrap align-items-center justify-content-md-end gap-2">
                         <select name="status" class="form-select select-pill w-auto py-2 px-3 bg-search" onchange="this.form.submit()" style="border-color: #ddd6fe; color: var(--text-body);">
-                            <option value="">{{ __('all_status') }}</option>
-                            <option value="open" {{ request('status') == 'open' ? 'selected' : '' }}>{{ __('open') }}</option>
-                            <option value="complete" {{ request('status') == 'complete' ? 'selected' : '' }}>{{ __('completed_status') }}</option>
+                            <option value="">Semua Status</option>
+                            <option value="open" {{ request('status') == 'open' ? 'selected' : '' }}>Open</option>
+                            <option value="complete" {{ request('status') == 'complete' ? 'selected' : '' }}>Selesai</option>
                         </select>
 
                         <select name="metode" class="form-select select-pill w-auto py-2 px-3 bg-search" onchange="this.form.submit()" style="border-color: #ddd6fe; color: var(--text-body);">
-                            <option value="">{{ __('all_methods') }}</option>
-                            <option value="tunai" {{ request('metode') == 'tunai' ? 'selected' : '' }}>{{ __('cash_method') }}</option>
-                            <option value="qris" {{ request('metode') == 'qris' ? 'selected' : '' }}>{{ __('qris_method') }}</option>
-                            <option value="transfer" {{ request('metode') == 'transfer' ? 'selected' : '' }}>{{ __('transfer_method') }}</option>
+                            <option value="">Semua Metode</option>
+                            <option value="tunai" {{ request('metode') == 'tunai' ? 'selected' : '' }}>Tunai</option>
+                            <option value="qris" {{ request('metode') == 'qris' ? 'selected' : '' }}>QRIS</option>
+                            <option value="transfer" {{ request('metode') == 'transfer' ? 'selected' : '' }}>Transfer</option>
                         </select>
 
                         @if(request('search') || request('metode') || request('status'))
                             <a href="{{ route('penjualan.index') }}" class="btn btn-sm btn-light rounded-pill px-3 py-2 border-0 d-inline-flex align-items-center gap-1" style="color: var(--icon-color); background: var(--icon-bg);">
-                                <i class="bi bi-x-circle"></i> {{ __('reset_filter') }}
+                                <i class="bi bi-x-circle"></i> Reset Filter
                             </a>
                         @endif
                     </div>
@@ -497,14 +497,14 @@
                 <table class="table table-custom align-middle mb-0">
                     <thead>
                         <tr>
-                            <th class="ps-4" style="width: 5%;">{{ __('no') }}</th>
-                            <th style="width: 15%;">{{ __('date_time_header') }}</th>
-                            <th style="width: 12%;">{{ __('cashier_header') }}</th>
-                            <th style="width: 20%;">{{ __('products_purchased') }}</th>
-                            <th style="width: 12%;">{{ __('total_payment') }}</th>
-                            <th style="width: 10%;">{{ __('method_header') }}</th>
-                            <th style="width: 10%;">{{ __('status_header') }}</th>
-                            <th class="pe-4 text-center" style="width: 10%;">{{ __('action_header') }}</th>
+                            <th class="ps-4" style="width: 5%;">No</th>
+                            <th style="width: 15%;">Tanggal & Waktu</th>
+                            <th style="width: 12%;">Kasir</th>
+                            <th style="width: 20%;">Produk Dibeli</th>
+                            <th style="width: 12%;">Total Bayar</th>
+                            <th style="width: 10%;">Metode</th>
+                            <th style="width: 10%;">Status</th>
+                            <th class="pe-4 text-center" style="width: 10%;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -531,7 +531,7 @@
                             <td>
                                 <span class="badge badge-purple d-inline-flex align-items-center gap-1.5 fs-7">
                                     <i class="bi bi-person-fill"></i>
-                                    <span>{{ $sale->user->name ?? __('cashier_default') }}</span>
+                                    <span>{{ $sale->user->name ?? 'Kasir' }}</span>
                                 </span>
                             </td>
 
@@ -540,7 +540,7 @@
                                     <div class="d-flex flex-wrap gap-1">
                                         @foreach($sale->itemPenjualan as $item)
                                             <span class="badge bg-light text-dark border px-2 py-1 rounded-2 fs-7 fw-normal">
-                                                <strong>{{ $item->produk->nama ?? __('product_default') }}</strong>
+                                                <strong>{{ $item->produk->nama ?? 'Produk' }}</strong>
                                                 <span class="ms-1" style="color: var(--icon-color);">x{{ $item->kuantitas }}</span>
                                             </span>
                                         @endforeach
@@ -571,7 +571,7 @@
                                 @php $status = isset($sale->status) ? strtoupper($sale->status) : 'COMPLETED'; @endphp
                                 @if($status === 'COMPLETED')
                                     <span class="badge badge-purple px-3 py-1.5 rounded-pill fw-bold">
-                                        <i class="bi bi-check-circle-fill me-1"></i> Complete
+                                        <i class="bi bi-check-circle-fill me-1"></i> Selesai
                                     </span>
                                 @elseif($status === 'OPEN')
                                     <span class="badge badge-purple px-3 py-1.5 rounded-pill fw-bold">

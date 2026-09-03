@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Authcontroller;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ItemPenjualanController;
 use App\Http\Controllers\JenisController;
@@ -10,10 +10,27 @@ use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SettingsController;
 
+// --- REDIRECT HALAMAN UTAMA ---
+Route::get('/', function () {
+    return redirect()->route('login');
+});
+
 // --- GUEST ROUTES ---
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'index'])->name('login');
     Route::post('/auth', [AuthController::class, 'auth'])->name('auth');
+    
+    // Route Registrasi Akun
+    Route::post('/register', [AuthController::class, 'register'])->name('register');
+    
+    // Route Lupa & Reset Sandi
+    Route::get('/forgot-password', function () {
+        return redirect()->route('login');
+    })->name('password.request');
+    
+    Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('/reset-password/{token}', [AuthController::class, 'showResetPasswordForm'])->name('password.reset');
+    Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
     
     // Google OAuth Routes
     Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('auth.google');
@@ -21,7 +38,7 @@ Route::middleware('guest')->group(function () {
 });
 
 // --- AUTHENTICATED ROUTES ---
-Route::middleware(['auth', 'set.language'])->group(function () {
+Route::middleware('auth')->group(function () {
     
     // Dashboard & Logout
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

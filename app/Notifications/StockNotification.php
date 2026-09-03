@@ -5,6 +5,7 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use App\Models\Produk;
 
 class StockNotification extends Notification
 {
@@ -18,6 +19,11 @@ class StockNotification extends Notification
      */
     public function __construct($product, $currentStock)
     {
+        // Jika yang dikirim hanya ID produk (angka), cari objek Produk di database
+        if (is_numeric($product)) {
+            $product = Produk::find($product);
+        }
+
         $this->product = $product;
         $this->currentStock = $currentStock;
     }
@@ -29,7 +35,6 @@ class StockNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        // Selalu gunakan database untuk notifikasi
         return ['database'];
     }
 
@@ -38,11 +43,15 @@ class StockNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
+        $namaProduk = is_object($this->product) 
+            ? ($this->product->nama_produk ?? $this->product->name ?? $this->product->nama ?? 'Produk') 
+            : 'Produk';
+
         return (new MailMessage)
             ->subject('Peringatan Stok Menipis - POS System')
             ->greeting('Halo ' . $notifiable->name . ',')
             ->line('Stok produk menipis.')
-            ->line('Produk: ' . $this->product->nama_produk)
+            ->line('Produk: ' . $namaProduk)
             ->line('Stok saat ini: ' . $this->currentStock)
             ->action('Kelola Stok', route('produk.index'))
             ->line('Silakan segera tambah stok produk.');
@@ -55,11 +64,22 @@ class StockNotification extends Notification
      */
     public function toArray(object $notifiable): array
     {
+        $productId = is_object($this->product) ? $this->product->id : $this->product;
+        
+        $productName = is_object($this->product) 
+            ? ($this->product->nama_produk ?? $this->product->name ?? $this->product->nama ?? 'Produk #' . $productId) 
+            : 'Produk #' . $productId;
+
         return [
-            'product_id' => $this->product->id,
-            'product_name' => $this->product->nama_produk,
+            'title'         => 'Stok Menipis: ' . $productName,
+            'message'       => 'Stok ' . $productName . ' menipis, tersisa ' . $this->currentStock . ' unit.',
+            'product_id'    => $productId,
+            'produk_id'     => $productId,
+            'product_name'  => $productName,
+            'produk_name'   => $productName,
+            'nama_produk'   => $productName,
             'current_stock' => $this->currentStock,
-            'message' => 'Stok ' . $this->product->nama_produk . ' menipis: ' . $this->currentStock,
+            'stok'          => $this->currentStock,
         ];
     }
 }

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', __('manage_products') . ' - POS ILHAM')
+@section('title', 'Kelola Produk - POS ILHAM')
 
 @section('content')
 
@@ -354,25 +354,25 @@
                 <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
                     <div class="date-badge">
                         <i class="bi bi-box-seam"></i>
-                        <span>{{ __('product_management') }}</span>
+                        <span>Manajemen Produk</span>
                     </div>
                 </div>
                 <h1 class="fw-bold text-white mb-2 fs-2">
-                    {{ __('manage_products') }}
+                    Kelola Produk
                 </h1>
-                <p class="text-white-50 mb-0 fs-6">{{ __('manage_products_subtitle') }}</p>
+                <p class="text-white-50 mb-0 fs-6">Kelola dan pantau stok barang Anda secara real-time</p>
             </div>
             <div class="col-lg-5 text-lg-end">
                 <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
                     <button onclick="window.print()" class="btn btn-outline-light rounded-pill px-3 shadow-sm fw-semibold d-inline-flex align-items-center gap-2">
                         <i class="bi bi-printer-fill"></i>
-                        <span>{{ __('print_data') }}</span>
+                        <span>Cetak Data</span>
                     </button>
 
                     @can('create', App\Models\Produk::class)
                         <a href="{{ route('produk.create') }}" class="btn btn-light rounded-pill px-4 shadow-sm fw-bold d-inline-flex align-items-center gap-2" style="color: var(--text-heading) !important;">
                             <i class="bi bi-plus-circle-fill" style="color: var(--icon-color);"></i>
-                            <span>{{ __('add_product') }}</span>
+                            <span>Tambah Produk</span>
                         </a>
                     @endcan
                 </div>
@@ -387,8 +387,8 @@
                 <i class="bi bi-boxes"></i>
             </div>
             <div>
-                <h2 class="h-title-main mb-0">{{ __('product_summary') }}</h2>
-                <span class="h-title-sub">{{ __('product_summary_subtitle') }}</span>
+                <h2 class="h-title-main mb-0">Ringkasan Produk</h2>
+                <span class="h-title-sub">Informasi statistik stok produk</span>
             </div>
         </div>
     </div>
@@ -400,7 +400,7 @@
                 <div class="card-top-accent"></div>
                 <div class="card-body p-0">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="h-metric-label">{{ __('total_products') }}</span>
+                        <span class="h-metric-label">Total Produk</span>
                         <div class="icon-box-modern">
                             <i class="bi bi-boxes"></i>
                         </div>
@@ -409,14 +409,14 @@
                 </div>
             </div>
         </div>
-        
+
         {{-- TOTAL STOK --}}
         <div class="col-md-6 col-xl-3">
             <div class="card dashboard-card h-100 p-3">
                 <div class="card-top-accent"></div>
                 <div class="card-body p-0">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="h-metric-label">{{ __('total_stock_items') }}</span>
+                        <span class="h-metric-label">Total Stok Barang</span>
                         <div class="icon-box-modern">
                             <i class="bi bi-stack"></i>
                         </div>
@@ -425,14 +425,14 @@
                 </div>
             </div>
         </div>
-        
+
         {{-- STOK KRITIS --}}
         <div class="col-md-6 col-xl-3">
             <div class="card dashboard-card h-100 p-3">
                 <div class="card-top-accent"></div>
                 <div class="card-body p-0">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="h-metric-label">{{ __('critical_stock') }}</span>
+                        <span class="h-metric-label">Stok Kritis</span>
                         <div class="icon-box-modern" style="background-color: #fef3c7 !important; color: #b45309 !important; border-color: #fde68a !important;">
                             <i class="bi bi-exclamation-triangle-fill" style="color: #b45309 !important;"></i>
                         </div>
@@ -441,14 +441,14 @@
                 </div>
             </div>
         </div>
-        
+
         {{-- STOK HABIS --}}
         <div class="col-md-6 col-xl-3">
             <div class="card dashboard-card h-100 p-3">
                 <div class="card-top-accent"></div>
                 <div class="card-body p-0">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="h-metric-label">{{ __('stock_empty') }}</span>
+                        <span class="h-metric-label">Stok Habis</span>
                         <div class="icon-box-modern" style="background-color: #fee2e2 !important; color: #b91c1c !important; border-color: #fca5a5 !important;">
                             <i class="bi bi-x-circle-fill" style="color: #b91c1c !important;"></i>
                         </div>
@@ -461,12 +461,12 @@
 
     {{-- MAIN CARD --}}
     <div class="card dashboard-card mb-4">
-        
+
         {{-- CARD HEADER / FILTER & SEARCH --}}
         <div class="card-header bg-white border-0 pt-4 px-4 pb-2">
             <form action="{{ route('produk.index') }}" method="GET">
                 <div class="row g-3 justify-content-between align-items-center">
-                    
+
                     {{-- SEARCH BAR --}}
                     <div class="col-md-5 col-lg-4">
                         <div class="input-group search-box">
@@ -478,7 +478,7 @@
                                 name="search"
                                 value="{{ request('search') }}"
                                 class="form-control border-start-0 rounded-end-pill ps-0 bg-search shadow-none"
-                                placeholder="{{ __('search_placeholder') }}"
+                                placeholder="Cari nama produk..."
                                 id="fastSearchInput"
                             >
                         </div>
@@ -486,28 +486,28 @@
 
                     {{-- FILTER KATEGORI & STATUS STOK --}}
                     <div class="col-md-7 col-lg-8 d-flex flex-wrap align-items-center justify-content-md-end gap-2">
-                        
+
                         {{-- FILTER JENIS / KATEGORI --}}
                         <select name="jenis" class="form-select bg-search rounded-pill shadow-none w-auto" onchange="this.form.submit()" style="color: var(--text-body); font-weight: 500;">
-                            <option value="">{{ __('all_categories') }}</option>
-                            <option value="Minuman" {{ request('jenis') == 'Minuman' ? 'selected' : '' }}>{{ __('drinks') }}</option>
-                            <option value="Makanan" {{ request('jenis') == 'Makanan' ? 'selected' : '' }}>{{ __('food') }}</option>
-                            <option value="Snack" {{ request('jenis') == 'Snack' ? 'selected' : '' }}>{{ __('snacks') }}</option>
+                            <option value="">Semua Kategori</option>
+                            <option value="Minuman" {{ request('jenis') == 'Minuman' ? 'selected' : '' }}>Minuman</option>
+                            <option value="Makanan" {{ request('jenis') == 'Makanan' ? 'selected' : '' }}>Makanan</option>
+                            <option value="Snack" {{ request('jenis') == 'Snack' ? 'selected' : '' }}>Snack</option>
                             <option value="Elektronik" {{ request('jenis') == 'Elektronik' ? 'selected' : '' }}>Elektronik</option>
                             <option value="ATK" {{ request('jenis') == 'ATK' ? 'selected' : '' }}>ATK</option>
                         </select>
 
                         {{-- FILTER STATUS STOK --}}
                         <select name="stok_status" class="form-select bg-search rounded-pill shadow-none w-auto" onchange="this.form.submit()" style="color: var(--text-body); font-weight: 500;">
-                            <option value="">{{ __('all_stock_status') }}</option>
-                            <option value="ready" {{ request('stok_status') == 'ready' ? 'selected' : '' }}>{{ __('stock_available') }}</option>
-                            <option value="kritis" {{ request('stok_status') == 'kritis' ? 'selected' : '' }}>{{ __('stock_critical') }}</option>
-                            <option value="habis" {{ request('stok_status') == 'habis' ? 'selected' : '' }}>{{ __('stock_out') }}</option>
+                            <option value="">Semua Status Stok</option>
+                            <option value="ready" {{ request('stok_status') == 'ready' ? 'selected' : '' }}>Stok Tersedia</option>
+                            <option value="kritis" {{ request('stok_status') == 'kritis' ? 'selected' : '' }}>Stok Kritis</option>
+                            <option value="habis" {{ request('stok_status') == 'habis' ? 'selected' : '' }}>Stok Habis</option>
                         </select>
 
                         @if(request('search') || request('jenis') || request('stok_status'))
                             <a href="{{ route('produk.index') }}" class="btn btn-sm btn-light rounded-pill px-3 border-0" style="color: var(--icon-color); background: var(--icon-bg);">
-                                <i class="bi bi-x-circle me-1"></i>{{ __('reset') }}
+                                <i class="bi bi-x-circle me-1"></i>Reset
                             </a>
                         @endif
                     </div>
@@ -522,15 +522,15 @@
                 <table class="table table-hover align-middle mb-0 table-custom">
                     <thead>
                         <tr>
-                            <th class="ps-4" style="width: 5%;">{{ __('no') }}</th>
-                            <th style="width: 8%;">{{ __('photo_header') }}</th>
-                            <th>{{ __('product_name_header') }}</th>
-                            <th>{{ __('category_header') }}</th>
-                            <th>{{ __('added_by') }}</th>
-                            <th>{{ __('purchase_price_header') }}</th>
-                            <th>{{ __('selling_price_header') }}</th>
-                            <th>{{ __('stock_header') }}</th>
-                            <th class="pe-4 text-end" style="width: 12%;">{{ __('action_header') }}</th>
+                            <th class="ps-4" style="width: 5%;">No</th>
+                            <th style="width: 8%;">Foto</th>
+                            <th>Nama Produk</th>
+                            <th>Kategori</th>
+                            <th>Ditambahkan Oleh</th>
+                            <th>Harga Beli</th>
+                            <th>Harga Jual</th>
+                            <th>Stok</th>
+                            <th class="pe-4 text-end" style="width: 12%;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -541,7 +541,6 @@
                             </td>
                             <td>
                                 @if(!empty($product->foto))
-                                    {{-- MENDUKUNG LINK ONLINE (HTTP/HTTPS) & FILE LOKAL STORAGE DENGAN FALLBACK JIKA RUSAK --}}
                                     <img src="{{ Str::startsWith($product->foto, ['http://', 'https://']) ? $product->foto : asset('storage/' . $product->foto) }}" 
                                          alt="{{ $product->nama }}" 
                                          class="product-thumb shadow-sm border"
@@ -557,7 +556,7 @@
                             </td>
                             <td>
                                 <span class="badge badge-purple px-3 py-1.5 rounded-pill fw-semibold">
-                                    <i class="bi bi-tag-fill me-1"></i>{{ $product->jenis ?? __('general') }}
+                                    <i class="bi bi-tag-fill me-1"></i>{{ $product->jenis ?? 'Umum' }}
                                 </span>
                             </td>
                             <td class="text-muted small">
@@ -574,15 +573,15 @@
                             <td>
                                 @if($product->stok > 10)
                                     <span class="badge badge-soft-emerald px-3 py-1.5 rounded-pill fw-bold">
-                                        {{ $product->stok }} {{ __('pcs') }}
+                                        {{ $product->stok }} Pcs
                                     </span>
                                 @elseif($product->stok > 0)
                                     <span class="badge badge-soft-amber px-3 py-1.5 rounded-pill fw-bold">
-                                        {{ $product->stok }} {{ __('pcs') }} ({{ __('critical') }})
+                                        {{ $product->stok }} Pcs (Kritis)
                                     </span>
                                 @else
                                     <span class="badge badge-soft-danger px-3 py-1.5 rounded-pill fw-bold">
-                                        {{ __('empty') }}
+                                        Habis
                                     </span>
                                 @endif
                             </td>
@@ -590,14 +589,14 @@
                                 <div class="d-flex justify-content-end gap-2">
                                     {{-- DETAIL --}}
                                     @can('view', $product)
-                                        <a href="{{ route('produk.show', $product) }}" class="btn btn-action-purple rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" title="{{ __('view_detail') }}">
+                                        <a href="{{ route('produk.show', $product) }}" class="btn btn-action-purple rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" title="Lihat Detail">
                                             <i class="bi bi-eye-fill"></i>
                                         </a>
                                     @endcan
 
                                     {{-- EDIT --}}
                                     @can('update', $product)
-                                        <a href="{{ route('produk.edit', $product) }}" class="btn btn-action-edit rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" title="{{ __('edit_product') }}">
+                                        <a href="{{ route('produk.edit', $product) }}" class="btn btn-action-edit rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" title="Edit Produk">
                                             <i class="bi bi-pencil-fill"></i>
                                         </a>
                                     @endcan
@@ -607,7 +606,7 @@
                                         <button type="button"
                                                 class="btn btn-action-delete rounded-circle d-inline-flex align-items-center justify-content-center"
                                                 style="width: 36px; height: 36px;"
-                                                title="{{ __('delete_product') }}"
+                                                title="Hapus Produk"
                                                 onclick="triggerDeleteModal('{{ route('produk.destroy', $product) }}', '{{ $product->nama }}')">
                                             <i class="bi bi-trash-fill"></i>
                                         </button>
@@ -619,7 +618,7 @@
                         <tr>
                             <td colspan="9" class="text-center py-5 text-muted">
                                 <i class="bi bi-box-seam fs-1 d-block mb-2" style="color: var(--icon-color);"></i>
-                                <span class="fw-medium">{{ __('no_products_found') }}</span>
+                                <span class="fw-medium">Tidak ada produk yang ditemukan</span>
                             </td>
                         </tr>
                     @endforelse
@@ -698,14 +697,14 @@
 <script>
     function triggerDeleteModal(deleteUrl, productName) {
         Swal.fire({
-            title: '{{ __('delete_product_title') }}',
-            text: '{{ __('delete_product_message') }}'.replace('{product}', productName),
+            title: 'Konfirmasi Hapus',
+            text: `Apakah Anda yakin ingin menghapus produk "${productName}"?`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#e11d48',
             cancelButtonColor: '#64748b',
-            confirmButtonText: '{{ __('yes_delete') }}',
-            cancelButtonText: '{{ __('cancel') }}',
+            confirmButtonText: 'Ya, Hapus',
+            cancelButtonText: 'Batal',
             reverseButtons: true,
             customClass: { popup: 'shadow-lg' }
         }).then((result) => {

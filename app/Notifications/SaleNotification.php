@@ -34,7 +34,6 @@ class SaleNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        // Selalu gunakan database untuk notifikasi
         return ['database'];
     }
 
@@ -66,13 +65,60 @@ class SaleNotification extends Notification
     {
         $userName = $this->userName ?? $this->sale->user->name ?? 'User';
         $userRole = $this->userRole ?? ucfirst($this->sale->user->role->name ?? $this->sale->user->role->NAME ?? 'User');
-        
+
+        $items = [];
+
+        // 1. Ambil relasi itemPenjualan sesuai skema Controller
+        $details = $this->sale->itemPenjualan 
+                ?? $this->sale->details 
+                ?? $this->sale->detailPenjualans 
+                ?? [];
+
+        foreach ($details as $detail) {
+            // Ambil nama barang dari relasi produk atau atribut lokal
+            $productName = $detail->produk->nama 
+                        ?? $detail->produk->nama_produk 
+                        ?? $detail->produk->name 
+                        ?? $detail->nama 
+                        ?? $detail->nama_produk 
+                        ?? null;
+
+            if ($productName) {
+                $items[] = $productName;
+            }
+        }
+
+        // 2. Fallback jika relasi belum ter-load sempurna
+        if (empty($items) && isset($this->sale->id)) {
+            try {
+                $rows = \Illuminate\Support\Facades\DB::table('item_penjualans')
+                    ->where('penjualan_id', $this->sale->id)
+                    ->get();
+
+                if ($rows->isEmpty()) {
+                    $rows = \Illuminate\Support\Facades\DB::table('detail_penjualans')
+                        ->where('penjualan_id', $this->sale->id)
+                        ->get();
+                }
+
+                foreach ($rows as $row) {
+                    if (!empty($row->produk_id)) {
+                        $p = \Illuminate\Support\Facades\DB::table('produks')->where('id', $row->produk_id)->first();
+                        if ($p) {
+                            $items[] = $p->nama ?? $p->nama_produk ?? $p->name ?? null;
+                        }
+                    }
+                }
+            } catch (\Throwable $e) {}
+        }
+
         return [
-            'sale_id' => $this->sale->id,
-            'total' => $this->total,
+            'sale_id'   => $this->sale->id,
+            'total'     => $this->total,
             'user_name' => $userName,
             'user_role' => $userRole,
-            'message' => 'Penjualan baru #' . $this->sale->id . ' oleh ' . $userName . ' (' . $userRole . ') dengan total Rp ' . number_format($this->total, 0, ',', '.'),
+            'items'     => array_values(array_filter(array_unique($items))),
+            'message'   => 'Transaksi Baru #' . $this->sale->id,
         ];
     }
 }

@@ -2,32 +2,35 @@
 
 namespace App\Http\Requests\Produk;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * Membersihkan pemisah ribuan/titik sebelum validasi berjalan.
      */
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'purchase_price' => $this->purchase_price ? preg_replace('/[^0-9]/', '', $this->purchase_price) : null,
+            'selling_price'  => $this->selling_price ? preg_replace('/[^0-9]/', '', $this->selling_price) : null,
+            'stock'          => $this->stock ? preg_replace('/[^0-9]/', '', $this->stock) : null,
+        ]);
+    }
+
     public function rules(): array
     {
         return [
             'foto'           => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'jenis'          => 'required|string|max:100',
             'name'           => 'required|string|max:255',
-            'purchase_price' => 'required|integer|min:0',
-            'selling_price'  => 'required|integer|min:0',
+            'purchase_price' => 'required|numeric|min:0',
+            'selling_price'  => 'required|numeric|min:0',
             'stock'          => 'required|integer|min:0',
         ];
     }
@@ -36,16 +39,16 @@ class UpdateRequest extends FormRequest
     {
         return [
             'foto.image'              => 'File yang diupload harus gambar.',
-            'foto.mimes'              => 'Extensi gambar harus JPG, JPEG, PNG.',
+            'foto.mimes'              => 'Ekstensi gambar harus JPG, JPEG, PNG.',
             'foto.max'                => 'Maksimal ukuran gambar 2MB.',
             'jenis.required'          => 'Jenis / Kategori produk wajib dipilih.',
             'name.required'           => 'Nama wajib diisi.',
-            'purchase_price.required' => 'harga beli wajib diisi.',
-            'purchase_price.integer'  => 'harga beli harus diisi bilangan bulat.',
-            'selling_price.required'  => 'harga jual wajib diisi.',
-            'selling_price.integer'   => 'harga jual harus diisi bilangan bulat.',
-            'stock.required'          => 'Stock wajib diisi.',
-            'stock.integer'           => 'Stock harus diisi angka.',
+            'purchase_price.required' => 'Harga beli wajib diisi.',
+            'purchase_price.numeric'  => 'Harga beli harus berupa angka.',
+            'selling_price.required'  => 'Harga jual wajib diisi.',
+            'selling_price.numeric'   => 'Harga jual harus berupa angka.',
+            'stock.required'          => 'Stok wajib diisi.',
+            'stock.integer'           => 'Stok harus berupa angka.',
         ];
     }
 }

@@ -25,7 +25,6 @@
         }
 
         body {
-            /* Perpaduan warna ungu elegan (Deep Purple -> Royal Purple -> Violet) */
             background: linear-gradient(135deg, #2e1065 0%, #581c87 40%, #7e22ce 70%, #6b21a8 100%);
             min-height: 100vh;
             display: flex;
@@ -34,10 +33,9 @@
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             padding: 1rem;
             position: relative;
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
-        /* Animated Purple Radial Glow Background */
         body::before {
             content: '';
             position: absolute;
@@ -58,7 +56,6 @@
             100% { transform: scale(1) rotate(0deg); opacity: 0.7; }
         }
 
-        /* Floating Purple Shapes */
         .floating-shapes {
             position: absolute;
             width: 100%;
@@ -127,7 +124,6 @@
             flex-direction: row;
         }
 
-        /* Left Side - Branding */
         .login-branding {
             background: linear-gradient(135deg, #6d28d9 0%, #8b5cf6 50%, #a855f7 100%);
             padding: 3rem 2.5rem;
@@ -139,29 +135,6 @@
             color: white;
             flex: 1;
             min-width: 300px;
-        }
-
-        .branding-icon {
-            width: 120px;
-            height: 120px;
-            background: rgba(255, 255, 255, 0.18);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 2rem;
-            backdrop-filter: blur(10px);
-            animation: brandFloat 4s ease-in-out infinite;
-        }
-
-        @keyframes brandFloat {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-12px) scale(1.03); }
-        }
-
-        .branding-icon i {
-            font-size: 3.5rem;
         }
 
         .branding-title {
@@ -205,7 +178,6 @@
             font-weight: 500;
         }
 
-        /* Right Side - Form */
         .login-form-section {
             padding: 3rem 2.5rem;
             flex: 1;
@@ -231,7 +203,7 @@
 
         .form-control {
             border-radius: 12px;
-            padding: 0.85rem 1rem 0.85rem 2.8rem;
+            padding: 0.85rem 1rem 0.85rem 1rem;
             border: 2px solid #e2e8f0;
             font-size: 0.95rem;
             transition: all 0.3s ease;
@@ -243,10 +215,6 @@
             border-color: var(--purple-main);
             box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
             background: white;
-        }
-
-        .form-control::placeholder {
-            color: #94a3b8;
         }
 
         .input-icon {
@@ -287,29 +255,10 @@
             letter-spacing: 0.5px;
         }
 
-        .btn-gradient-login::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .btn-gradient-login:hover::before {
-            left: 100%;
-        }
-
         .btn-gradient-login:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(124, 58, 237, 0.45);
             color: white;
-        }
-
-        .btn-gradient-login:active {
-            transform: translateY(0);
         }
 
         .error-badge {
@@ -318,13 +267,6 @@
             padding: 0.5rem 0.75rem;
             margin-top: 0.5rem;
             display: inline-block;
-            animation: shake 0.5s ease-in-out;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
         }
 
         .loading-spinner {
@@ -360,7 +302,6 @@
             color: #a0aec0;
             cursor: pointer;
             padding: 0;
-            transition: color 0.3s ease;
         }
 
         .password-toggle:hover {
@@ -388,7 +329,19 @@
             font-size: 0.9rem;
             color: #64748b;
             cursor: pointer;
-            user-select: none;
+        }
+
+        .forgot-password-link {
+            font-size: 0.85rem;
+            color: var(--purple-main);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .forgot-password-link:hover {
+            color: var(--purple-deep);
+            text-decoration: underline;
         }
 
         .caps-lock-warning {
@@ -400,24 +353,6 @@
             border-radius: 8px;
             font-size: 0.85rem;
             margin-top: 0.5rem;
-            animation: slideDown 0.3s ease;
-        }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .attempts-warning {
-            display: none;
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #991b1b;
-            padding: 0.75rem 1rem;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            margin-bottom: 1rem;
-            animation: shake 0.5s ease-in-out;
         }
 
         @media (max-width: 768px) {
@@ -440,7 +375,6 @@
     <div class="card login-card">
         
         <div class="login-branding">
-            
             <h1 class="branding-title">POINT OF SALE</h1>
             <p class="branding-subtitle">Sistem Point of Sale modern untuk mengelola bisnis Anda dengan mudah dan efisien</p>
             
@@ -470,11 +404,6 @@
                 <p>Masuk ke akun Anda untuk melanjutkan</p>
             </div>
 
-            <div class="attempts-warning" id="attemptsWarning">
-                <i class="bi bi-shield-exclamation me-2"></i>
-                <span id="attemptsText">Terlalu banyak percobaan login gagal. Coba lagi dalam beberapa menit.</span>
-            </div>
-            
             <form action="{{ route('auth') }}" method="POST" id="loginForm">
                 @csrf
 
@@ -527,11 +456,14 @@
                     @enderror
                 </div>
 
-                <div class="mb-4">
+                <div class="mb-4 d-flex justify-content-between align-items-center">
                     <div class="remember-me">
                         <input type="checkbox" name="remember" id="remember">
                         <label for="remember">Ingat saya</label>
                     </div>
+                    <a href="#" class="forgot-password-link" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">
+                        Lupa Sandi?
+                    </a>
                 </div>
 
                 <div class="d-grid">
@@ -546,7 +478,7 @@
             <div class="text-center mt-4">
                 <p class="text-muted mb-0" style="font-size: 0.9rem;">
                     Belum punya akun? 
-                    <a href="#" class="fw-bold" style="color: var(--purple-main); text-decoration: none;" onclick="showRegisterInfo()">Hubungi Admin</a>
+                    <a href="#" class="fw-bold" style="color: var(--purple-main); text-decoration: none;" data-bs-toggle="modal" data-bs-target="#registerModal">Buat Akun</a>
                 </p>
             </div>
         </div>
@@ -554,10 +486,100 @@
     </div>
 </div>
 
+<!-- Modal Lupa Sandi (Forgot Password) -->
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+            <div class="modal-header border-0 text-white p-4" style="background: linear-gradient(135deg, #6d28d9 0%, #8b5cf6 100%);">
+                <h5 class="modal-title fw-bold" id="forgotPasswordModalLabel">
+                    <i class="bi bi-key me-2"></i>Lupa Kata Sandi
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <form action="{{ route('password.email') }}" method="POST">
+                @csrf
+                <div class="modal-body p-4">
+                    <p class="text-muted small mb-3">Masukkan alamat email akun Anda. Kami akan memproses tautan pemulihan kata sandi Anda.</p>
+                    
+                    <div class="mb-3">
+                        <label for="reset_email" class="form-label">Alamat Email</label>
+                        <div class="input-wrapper">
+                            <input type="email" name="email" id="reset_email" class="form-control" placeholder="nama@email.com" required style="padding-left: 2.8rem;">
+                            <i class="bi bi-envelope input-icon"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light rounded-3 fw-semibold px-4" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-gradient-login text-white rounded-3 fw-semibold px-4">Kirim Tautan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Pendaftaran (Register) -->
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+            <div class="modal-header border-0 text-white p-4" style="background: linear-gradient(135deg, #6d28d9 0%, #8b5cf6 100%);">
+                <h5 class="modal-title fw-bold" id="registerModalLabel">
+                    <i class="bi bi-person-plus me-2"></i>Daftar Akun Baru
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <form action="{{ route('register') }}" method="POST">
+                @csrf
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label for="reg_name" class="form-label">Nama Lengkap</label>
+                        <div class="input-wrapper">
+                            <input type="text" name="name" id="reg_name" class="form-control" placeholder="Nama Lengkap" required style="padding-left: 2.8rem;">
+                            <i class="bi bi-person input-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="reg_email" class="form-label">Alamat Email</label>
+                        <div class="input-wrapper">
+                            <input type="email" name="email" id="reg_email" class="form-control" placeholder="nama@email.com" required style="padding-left: 2.8rem;">
+                            <i class="bi bi-envelope input-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="reg_password" class="form-label">Kata Sandi</label>
+                        <div class="input-wrapper">
+                            <input type="password" name="password" id="reg_password" class="form-control" placeholder="••••••••" required style="padding-left: 2.8rem;">
+                            <i class="bi bi-lock input-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="reg_password_confirmation" class="form-label">Konfirmasi Kata Sandi</label>
+                        <div class="input-wrapper">
+                            <input type="password" name="password_confirmation" id="reg_password_confirmation" class="form-control" placeholder="••••••••" required style="padding-left: 2.8rem;">
+                            <i class="bi bi-shield-lock input-icon"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light rounded-3 fw-semibold px-4" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-gradient-login text-white rounded-3 fw-semibold px-4">Daftar Sekarang</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    // Toggle Password Visibility
     function togglePassword() {
         const passwordInput = document.getElementById('password');
         const toggleIcon = document.getElementById('passwordToggleIcon');
@@ -573,7 +595,6 @@
         }
     }
 
-    // Caps Lock Detection
     const passwordInput = document.getElementById('password');
     const capsLockWarning = document.getElementById('capsLockWarning');
 
@@ -588,32 +609,39 @@
     passwordInput.addEventListener('keydown', checkCapsLock);
     passwordInput.addEventListener('keyup', checkCapsLock);
 
-    // Form Loading State
     document.getElementById('loginForm').addEventListener('submit', function() {
         const button = document.getElementById('loginButton');
         button.classList.add('loading');
     });
 
-    // Show Register Info
-    function showRegisterInfo() {
+    {{-- Penanganan Pop-Up SweetAlert2 --}}
+    @if(session('demo_link'))
         Swal.fire({
-            title: 'Daftar Akun Baru',
+            icon: 'info',
+            title: 'Mode Testing (Dev)',
             html: `
-                <div style="text-align: left;">
-                    <p>Untuk membuat akun baru, silakan hubungi administrator sistem:</p>
-                    <ul style="margin-top: 1rem; padding-left: 1.5rem;">
-                        <li>Admin POS ILHAM</li>
-                        <li>Email: admin@posilham.com</li>
-                        <li>Telepon: +62 812-3456-7890</li>
-                    </ul>
+                <p class="mb-3">{{ session('status') ?? 'Instruksi reset password berhasil dibuat.' }}</p>
+                <div class="p-3 bg-light rounded-3 text-start border">
+                    <small class="text-muted d-block mb-2"><strong>[Simulasi Testing]</strong> Karena email tidak dikirim sungguhan, klik tombol di bawah untuk melanjutkan:</small>
+                    <a href="{{ session('demo_link') }}" class="btn text-white w-100 fw-semibold" style="background-color: #7c3aed;">
+                        <i class="bi bi-shield-lock me-1"></i> Buka Form Reset Password
+                    </a>
                 </div>
             `,
+            showConfirmButton: false,
+            showCloseButton: true,
+            customClass: { popup: 'rounded-4' }
+        });
+    @elseif(session('status'))
+        Swal.fire({
+            icon: 'info',
+            title: 'Informasi',
+            text: "{{ session('status') }}",
             confirmButtonColor: '#7c3aed',
             customClass: { popup: 'rounded-4' }
         });
-    }
+    @endif
 
-    {{-- POP-UP SUKSES --}}
     @if(session('success'))
         Swal.fire({
             icon: 'success',
@@ -626,11 +654,10 @@
         });
     @endif
 
-    {{-- POP-UP GAGAL LOGIN --}}
     @if(session('error'))
         Swal.fire({
             icon: 'error',
-            title: 'Gagal Masuk',
+            title: 'Gagal',
             text: "{{ session('error') }}",
             confirmButtonColor: '#7c3aed',
             customClass: { popup: 'rounded-4' }

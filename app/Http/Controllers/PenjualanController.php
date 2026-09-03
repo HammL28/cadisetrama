@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SearchRequest;
 use App\Models\Penjualan;
 use App\Models\Produk;
+use App\Models\User;
 use App\Notifications\SaleNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,7 +33,8 @@ class PenjualanController extends Controller
                             $u->where('name', 'like', '%' . $keyword . '%');
                         })
                         ->orWhereHas('itemPenjualan.produk', function ($p) use ($keyword) {
-                            $p->where('nama', 'like', '%' . $keyword . '%');
+                            $p->where('nama', 'like', '%' . $keyword . '%')
+                              ->orWhere('nama_produk', 'like', '%' . $keyword . '%');
                         });
                 });
             })
@@ -85,7 +87,8 @@ class PenjualanController extends Controller
         $keyword = $request->input('search');
 
         $products = Produk::when($keyword, function ($query) use ($keyword) {
-            $query->where('nama', 'like', '%' . $keyword . '%');
+            $query->where('nama', 'like', '%' . $keyword . '%')
+                  ->orWhere('nama_produk', 'like', '%' . $keyword . '%');
         })
         ->orderBy('nama')
         ->get();
@@ -137,11 +140,14 @@ class PenjualanController extends Controller
                 'status'            => 'COMPLETED',
             ]);
 
+            // 🔴 PERBAIKAN UTAMA: Eager-load relasi produk dan user secara eksplisit
+            $penjualan->load(['itemPenjualan.produk', 'user']);
+
             $currentUser = Auth::user();
             $userName = $currentUser->name ?? 'Kasir';
             $userRole = ucfirst(is_object($currentUser->role) ? ($currentUser->role->name ?? 'User') : ($currentUser->role ?? 'User'));
 
-            $users = \App\Models\User::where('sales_notifications', true)->get();
+            $users = User::where('sales_notifications', true)->get();
             foreach ($users as $user) {
                 $user->notify(new SaleNotification($penjualan, $total, $userName, $userRole));
             }

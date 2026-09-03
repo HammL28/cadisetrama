@@ -424,24 +424,17 @@
         <li class="sidebar-menu-item">
             <a class="sidebar-menu-link {{ Request::is('profile*') ? 'active' : '' }}" href="{{ route('profile.index') }}">
                 <i class="bi bi-person-circle sidebar-menu-icon"></i>
-                <span class="sidebar-menu-text">{{ __('profile') }}</span>
+                <span class="sidebar-menu-text">{{ __('Profile') }}</span>
             </a>
         </li>
 
-        @if(Auth::check() && Auth::user()->role && (Auth::user()->role->name === 'admin' || Auth::user()->role->NAME === 'ADMIN'))
-        <li class="sidebar-menu-item">
-            <a class="sidebar-menu-link {{ Request::is('settings*') ? 'active' : '' }}" href="{{ route('settings.index') }}">
-                <i class="bi bi-gear-fill sidebar-menu-icon"></i>
-                <span class="sidebar-menu-text">{{ __('settings') }}</span>
-            </a>
-        </li>
-        @endif
+       
 
         @if(Auth::check() && Auth::user()->role && (Auth::user()->role->name === 'admin' || Auth::user()->role->NAME === 'ADMIN'))
         <li class="sidebar-menu-item">
             <a class="sidebar-menu-link {{ Request::is('notifications*') ? 'active' : '' }}" href="{{ route('notifications.index') }}">
                 <i class="bi bi-bell-fill sidebar-menu-icon"></i>
-                <span class="sidebar-menu-text">{{ __('notifications') }}</span>
+                <span class="sidebar-menu-text">{{ __('Notifications') }}</span>
                 @if(Auth::user()->unreadNotifications->count() > 0)
                 <span class="badge rounded-pill" style="background: #ef4444; color: white; font-size: 0.7rem; margin-left: auto;">
                     {{ Auth::user()->unreadNotifications->count() }}

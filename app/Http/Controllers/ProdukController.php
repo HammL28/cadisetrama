@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Produk\StoreRequest;
 use App\Http\Requests\Produk\UpdateRequest;
-use App\Http\Requests\SearchRequest;
 use App\Models\Jenis;
 use App\Models\Produk;
+use App\Models\User;
 use App\Notifications\StockNotification;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -16,16 +16,13 @@ use Illuminate\Support\Facades\Storage;
 
 class ProdukController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         $this->authorize('viewAny', Produk::class);
 
         $query = Produk::query();
 
-        // 1. Filter Pencarian (Search Keyword)
+        // 1. Filter Pencarian
         if ($request->filled('search')) {
             $keyword = $request->input('search');
             $query->where(function ($q) use ($keyword) {
@@ -34,7 +31,7 @@ class ProdukController extends Controller
             });
         }
 
-        // 2. Filter Kategori / Jenis Produk
+        // 2. Filter Jenis
         if ($request->filled('jenis')) {
             $query->where('jenis', $request->input('jenis'));
         }
@@ -51,37 +48,27 @@ class ProdukController extends Controller
             }
         }
 
-        // Ambil data produk paginated
         $products = $query->latest()->paginate(10)->withQueryString();
 
-        // AMBIL SEMUA JENIS DARI DATABASE (secara dinamis dari tabel Produk/Jenis)
-        $semua_jenis = Produk::select('jenis')
+        $categories = Produk::select('jenis')
             ->whereNotNull('jenis')
             ->distinct()
             ->pluck('jenis');
 
-        return view('produk.index', compact('products', 'semua_jenis'));
+        return view('produk.index', compact('products', 'categories'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $this->authorize('create', Produk::class);
-
         $jenisList = Jenis::all();
 
         return view('produk.create', compact('jenisList'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreRequest $request)
     {
         $this->authorize('create', Produk::class);
-
         $dataReq = $request->validated();
 
         $data = [
@@ -97,16 +84,14 @@ class ProdukController extends Controller
             $data['foto'] = $request->file('foto')->store('products', 'public');
         }
 
-        Produk::create($data);
+        $produk = Produk::create($data);
 
-        return redirect()
-            ->route('produk.index')
-            ->with('success', 'Produk berhasil ditambahkan.');
+        // Pemicu Notifikasi Stok Kritis saat Produk Dibuat
+        $this->checkAndSendStockNotification($produk);
+
+        return redirect()->route('produk.index')->with('success', 'Produk berhasil ditambahkan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Produk $produk)
     {
         $this->authorize('view', $produk);
@@ -114,25 +99,17 @@ class ProdukController extends Controller
         return view('produk.detail', compact('produk'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Produk $produk)
     {
         $this->authorize('update', $produk);
-
         $jenisList = Jenis::all();
 
         return view('produk.edit', compact('produk', 'jenisList'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdateRequest $request, Produk $produk)
     {
         $this->authorize('update', $produk);
-
         $dataReq = $request->validated();
 
         $data = [
@@ -148,57 +125,56 @@ class ProdukController extends Controller
             if ($produk->foto && Storage::disk('public')->exists($produk->foto)) {
                 Storage::disk('public')->delete($produk->foto);
             }
-
             $data['foto'] = $request->file('foto')->store('products', 'public');
         }
 
         $produk->update($data);
 
-        // 📬 Kirim notifikasi stok jika stok menipis (< 10)
-        if ($data['stok'] < 10 && $data['stok'] > 0) {
-            $users = \App\Models\User::where('stock_notifications', true)->get();
-            foreach ($users as $user) {
-                Log::info('Sending stock notification to user: ' . $user->id . ' - ' . $user->name);
-                $user->notify(new StockNotification($produk, $data['stok']));
-            }
-        }
+        // Pemicu Notifikasi Stok Kritis saat Produk Diperbarui
+        $this->checkAndSendStockNotification($produk);
 
-        return redirect()
-            ->route('produk.index')
-            ->with('success', 'Produk berhasil diperbarui.');
+        return redirect()->route('produk.index')->with('success', 'Produk berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Produk $produk)
     {
         $this->authorize('delete', $produk);
 
         try {
-            // Hapus foto jika ada di storage
             if ($produk->foto && Storage::disk('public')->exists($produk->foto)) {
                 Storage::disk('public')->delete($produk->foto);
             }
 
-            // Coba hapus data produk
             $produk->delete();
 
-            return redirect()
-                ->route('produk.index')
-                ->with('success', 'Produk berhasil dihapus.');
-
+            return redirect()->route('produk.index')->with('success', 'Produk berhasil dihapus.');
         } catch (QueryException $e) {
-            // Tangkap error relasi foreign key constraint (SQLSTATE 23000)
             if ($e->getCode() === '23000') {
-                return redirect()
-                    ->route('produk.index')
-                    ->with('error', 'Produk gagal dihapus karena sudah tercatat dalam riwayat penjualan.');
+                return redirect()->route('produk.index')->with('error', 'Produk gagal dihapus karena sudah tercatat dalam riwayat penjualan.');
             }
 
-            return redirect()
-                ->route('produk.index')
-                ->with('error', 'Terjadi kesalahan saat menghapus produk.');
+            return redirect()->route('produk.index')->with('error', 'Terjadi kesalahan saat menghapus produk.');
+        }
+    }
+
+    /**
+     * Helper privat untuk mengecek dan mengirimkan notifikasi stok kritis.
+     */
+    private function checkAndSendStockNotification(Produk $produk): void
+    {
+        // Pemicu aktif jika stok <= 10 (termasuk stok 0)
+        if ($produk->stok <= 10) {
+            $users = User::where('stock_notifications', true)->get();
+
+            // Fallback: Jika tidak ada user dengan flag khusus, kirim ke semua user
+            if ($users->isEmpty()) {
+                $users = User::all();
+            }
+
+            foreach ($users as $user) {
+                Log::info('Sending stock notification to user ID: ' . $user->id);
+                $user->notify(new StockNotification($produk, $produk->stok));
+            }
         }
     }
 }

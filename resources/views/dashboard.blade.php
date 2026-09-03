@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', __('dashboard') . ' - POS System')
+@section('title', __('Dashboard') . ' - Sistem POS')
 
 @section('content')
 
@@ -216,7 +216,7 @@
                 <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
                     <div class="date-badge">
                         <i class="bi bi-calendar3"></i>
-                        <span>{{ __('today') }} &bull; {{ $tanggalHariIni->translatedFormat('l, d F Y') }}</span>
+                        <span>{{ __('Hari Ini') }} &bull; {{ $tanggalHariIni->translatedFormat('l, d F Y') }}</span>
                     </div>
                     <div class="date-badge">
                         <i class="bi bi-clock-history"></i>
@@ -224,15 +224,15 @@
                     </div>
                 </div>
                 <h1 class="fw-bold text-white mb-2 fs-2">
-                    {{ __('welcome_back') }}! 👋
+                    {{ __('Selamat Datang Kembali') }}! 👋
                 </h1>
-                <p class="text-white-50 mb-0 fs-6">{{ __('dashboard_subtitle') }}</p>
+                <p class="text-white-50 mb-0 fs-6">{{ __('Berikut adalah ringkasan performa toko Anda hari ini.') }}</p>
             </div>
         </div>
     </div>
 
 
-    {{-- SALES OVERVIEW (ADMIN/OWNER ONLY) --}}
+    {{-- RINGKASAN PENJUALAN (KHUSUS ADMIN/OWNER) --}}
     @can('viewAny', App\Models\User::class)
 
     <div class="d-flex align-items-center justify-content-between mb-3">
@@ -241,8 +241,8 @@
                 <i class="bi bi-graph-up-arrow"></i>
             </div>
             <div>
-                <h2 class="h-title-main mb-0">{{ __('sales_summary') }}</h2>
-                <span class="h-title-sub">{{ __('sales_summary_subtitle') }}</span>
+                <h2 class="h-title-main mb-0">{{ __('Ringkasan Penjualan') }}</h2>
+                <span class="h-title-sub">{{ __('Data transaksi dan pendapatan hari ini') }}</span>
             </div>
         </div>
     </div>
@@ -255,7 +255,7 @@
                 <div class="card-top-accent"></div>
                 <div class="card-body p-0">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="h-metric-label">{{ __('total_revenue') }}</span>
+                        <span class="h-metric-label">{{ __('Total Pendapatan') }}</span>
                         <div class="icon-box-modern">
                             <i class="bi bi-cash-stack"></i>
                         </div>
@@ -264,7 +264,7 @@
                         Rp {{ number_format($ringkasan['total_penjualan'], 0, ',', '.') }}
                     </div>
                     <span class="badge badge-purple rounded-pill py-1 px-2.5">
-                        <i class="bi bi-arrow-up-short"></i> {{ __('total_today') }}
+                        <i class="bi bi-arrow-up-short"></i> {{ __('Total Hari Ini') }}
                     </span>
                 </div>
             </div>
@@ -276,15 +276,15 @@
                 <div class="card-top-accent"></div>
                 <div class="card-body p-0">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="h-metric-label">{{ __('total_orders') }}</span>
+                        <span class="h-metric-label">{{ __('Total Transaksi') }}</span>
                         <div class="icon-box-modern">
                             <i class="bi bi-receipt"></i>
                         </div>
                     </div>
                     <div class="h-metric-value mb-2">
-                        {{ number_format($ringkasan['total_transaksi'], 0, ',', '.') }} <span class="fs-6 fw-semibold" style="color: var(--text-muted);">{{ __('transactions') }}</span>
+                        {{ number_format($ringkasan['total_transaksi'], 0, ',', '.') }} <span class="fs-6 fw-semibold" style="color: var(--text-muted);">{{ __('Transaksi') }}</span>
                     </div>
-                    <span class="h-title-sub">{{ __('successful_transactions') }}</span>
+                    <span class="h-title-sub">{{ __('Transaksi Berhasil') }}</span>
                 </div>
             </div>
         </div>
@@ -295,7 +295,7 @@
                 <div class="card-top-accent"></div>
                 <div class="card-body p-0">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="h-metric-label">{{ __('cash_payment') }}</span>
+                        <span class="h-metric-label">{{ __('Pembayaran Tunai') }}</span>
                         <div class="icon-box-modern">
                             <i class="bi bi-wallet2"></i>
                         </div>
@@ -303,7 +303,7 @@
                     <div class="h-metric-value mb-2">
                         Rp {{ number_format($ringkasan['total_cash'], 0, ',', '.') }}
                     </div>
-                    <span class="h-title-sub">{{ __('cash_received') }}</span>
+                    <span class="h-title-sub">{{ __('Tunai Diterima') }}</span>
                 </div>
             </div>
         </div>
@@ -314,7 +314,7 @@
                 <div class="card-top-accent"></div>
                 <div class="card-body p-0">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="h-metric-label">{{ __('non_cash_payment') }}</span>
+                        <span class="h-metric-label">{{ __('Pembayaran Non-Tunai') }}</span>
                         <div class="icon-box-modern">
                             <i class="bi bi-credit-card-2-front-fill"></i>
                         </div>
@@ -322,7 +322,7 @@
                     <div class="h-metric-value mb-2">
                         Rp {{ number_format($ringkasan['total_non_tunai'], 0, ',', '.') }}
                     </div>
-                    <span class="h-title-sub">{{ __('digital_payment') }}</span>
+                    <span class="h-title-sub">{{ __('Pembayaran Digital') }}</span>
                 </div>
             </div>
         </div>
@@ -342,8 +342,8 @@
                             <i class="bi bi-stars"></i>
                         </div>
                         <div>
-                            <h3 class="h-title-main mb-0">{{ __('best_selling_products') }}</h3>
-                            <span class="h-title-sub">{{ __('best_selling_subtitle') }}</span>
+                            <h3 class="h-title-main mb-0">{{ __('Produk Terlaris') }}</h3>
+                            <span class="h-title-sub">{{ __('Produk yang paling banyak diminati pelanggan') }}</span>
                         </div>
                     </div>
                 </div>
@@ -352,9 +352,9 @@
                         <table class="table table-custom align-middle mb-0">
                             <thead>
                                 <tr>
-                                    <th class="ps-4">{{ __('product_name') }}</th>
-                                    <th>{{ __('stock_availability') }}</th>
-                                    <th class="pe-4 text-end">{{ __('total_sales') }}</th>
+                                    <th class="ps-4">{{ __('Nama Produk') }}</th>
+                                    <th>{{ __('Ketersediaan Stok') }}</th>
+                                    <th class="pe-4 text-end">{{ __('Total Penjualan') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -365,12 +365,12 @@
                                     </td>
                                     <td>
                                         <span class="badge badge-purple px-3 py-1.5 rounded-pill">
-                                            {{ $produk->stok }} {{ __('units_available') }}
+                                            {{ $produk->stok }} {{ __('Unit Tersedia') }}
                                         </span>
                                     </td>
                                     <td class="pe-4 text-end">
                                         <span class="badge badge-purple px-3 py-2 rounded-pill fw-bold">
-                                            <i class="bi bi-bag-check-fill me-1"></i> {{ number_format($produk->total_terjual, 0, ',', '.') }} {{ __('sold') }}
+                                            <i class="bi bi-bag-check-fill me-1"></i> {{ number_format($produk->total_terjual, 0, ',', '.') }} {{ __('Terjual') }}
                                         </span>
                                     </td>
                                 </tr>
@@ -378,7 +378,7 @@
                                 <tr>
                                     <td colspan="3" class="text-center py-5" style="color: var(--text-muted);">
                                         <i class="bi bi-inbox fs-1 d-block mb-2" style="color: var(--text-light);"></i>
-                                        <span>{{ __('no_best_selling_data') }}</span>
+                                        <span>{{ __('Belum ada data produk terlaris') }}</span>
                                     </td>
                                 </tr>
                                 @endforelse
@@ -398,8 +398,8 @@
                 <i class="bi bi-boxes"></i>
             </div>
             <div>
-                <h2 class="h-title-main mb-0">{{ __('stock_condition') }}</h2>
-                <span class="h-title-sub">{{ __('stock_condition_subtitle') }}</span>
+                <h2 class="h-title-main mb-0">{{ __('Kondisi Stok') }}</h2>
+                <span class="h-title-sub">{{ __('Pantau stok produk yang hampir habis dan telah habis') }}</span>
             </div>
         </div>
     </div>
@@ -411,10 +411,10 @@
             <div class="card dashboard-card h-100">
                 <div class="card-header bg-transparent border-0 pt-4 px-4 pb-2 d-flex align-items-center justify-content-between">
                     <span class="fw-bold text-warning d-flex align-items-center gap-2 fs-6">
-                        <i class="bi bi-exclamation-triangle-fill"></i> {{ __('low_stock') }}
+                        <i class="bi bi-exclamation-triangle-fill"></i> {{ __('Stok Menipis') }}
                     </span>
                     <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-3 py-1 fw-bold">
-                        {{ method_exists($produkStokRendah, 'count') ? $produkStokRendah->count() : count($produkStokRendah) }} {{ __('product_item') }}
+                        {{ method_exists($produkStokRendah, 'count') ? $produkStokRendah->count() : count($produkStokRendah) }} {{ __('Item Produk') }}
                     </span>
                 </div>
                 <div class="card-body p-0">
@@ -423,8 +423,8 @@
                             <thead>
                                 <tr>
                                     <th class="ps-4" style="width: 60px;">#</th>
-                                    <th>{{ __('item_name') }}</th>
-                                    <th class="pe-4 text-end">{{ __('remaining_stock') }}</th>
+                                    <th>{{ __('Nama Barang') }}</th>
+                                    <th class="pe-4 text-end">{{ __('Sisa Stok') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -436,7 +436,7 @@
                                     <td class="fw-bold" style="color: var(--text-heading);">{{ $produk->nama }}</td>
                                     <td class="pe-4 text-end">
                                         <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-3 py-1 fw-bold">
-                                            {{ $produk->stok }} {{ __('unit') }}
+                                            {{ $produk->stok }} {{ __('Unit') }}
                                         </span>
                                     </td>
                                 </tr>
@@ -444,7 +444,7 @@
                                 <tr>
                                     <td colspan="3" class="text-center py-5" style="color: var(--text-muted);">
                                         <i class="bi bi-check-circle-fill fs-1 d-block mb-2" style="color: var(--text-light);"></i>
-                                        <span>{{ __('all_stock_safe') }}</span>
+                                        <span>{{ __('Semua stok dalam kondisi aman') }}</span>
                                     </td>
                                 </tr>
                                 @endforelse
@@ -460,10 +460,10 @@
             <div class="card dashboard-card h-100">
                 <div class="card-header bg-transparent border-0 pt-4 px-4 pb-2 d-flex align-items-center justify-content-between">
                     <span class="fw-bold text-danger d-flex align-items-center gap-2 fs-6">
-                        <i class="bi bi-x-circle-fill"></i> {{ __('out_of_stock') }}
+                        <i class="bi bi-x-circle-fill"></i> {{ __('Stok Habis') }}
                     </span>
                     <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-3 py-1 fw-bold">
-                        {{ method_exists($produkStokHabis, 'count') ? $produkStokHabis->count() : count($produkStokHabis) }} {{ __('product_item') }}
+                        {{ method_exists($produkStokHabis, 'count') ? $produkStokHabis->count() : count($produkStokHabis) }} {{ __('Item Produk') }}
                     </span>
                 </div>
                 <div class="card-body p-0">
@@ -472,8 +472,8 @@
                             <thead>
                                 <tr>
                                     <th class="ps-4" style="width: 60px;">#</th>
-                                    <th>{{ __('item_name') }}</th>
-                                    <th class="pe-4 text-end">{{ __('remarks') }}</th>
+                                    <th>{{ __('Nama Barang') }}</th>
+                                    <th class="pe-4 text-end">{{ __('Keterangan') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -485,7 +485,7 @@
                                     <td class="fw-bold" style="color: var(--text-heading);">{{ $produk->nama }}</td>
                                     <td class="pe-4 text-end">
                                         <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-3 py-1 fw-bold">
-                                            {{ __('out_of_stock_status') }}
+                                            {{ __('Stok Habis') }}
                                         </span>
                                     </td>
                                 </tr>
@@ -493,7 +493,7 @@
                                 <tr>
                                     <td colspan="3" class="text-center py-5" style="color: var(--text-muted);">
                                         <i class="bi bi-emoji-smile-fill fs-1 d-block mb-2" style="color: var(--text-light);"></i>
-                                        <span>{{ __('no_out_of_stock') }}</span>
+                                        <span>{{ __('Tidak ada produk yang habis') }}</span>
                                     </td>
                                 </tr>
                                 @endforelse

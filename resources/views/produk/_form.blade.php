@@ -1,27 +1,27 @@
 @csrf
 
-{{-- CDN CSS Select2 & Bootstrap Icons --}}
+{{-- CDN CSS Select2 --}}
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
 
 <style>
     :root {
-        --purple-main: #8b5cf6;
-        --purple-dark: #7c3aed;
+        --purple-main: #7c3aed;
+        --purple-dark: #5b21b6;
         --purple-soft: #f3e8ff;
-        --gray-border: #e2e8f0;
+        --gray-border: #e9d5ff;
     }
 
     .form-card-section {
         background-color: #ffffff;
         border-radius: 16px;
         border: 1px solid var(--gray-border);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.04);
     }
 
     .form-label-custom {
         font-weight: 600;
-        color: #374151;
+        color: #2e1065;
         font-size: 0.875rem;
         margin-bottom: 0.4rem;
         display: inline-block;
@@ -51,10 +51,10 @@
 
     .form-control-custom:focus {
         border-color: var(--purple-main) !important;
-        box-shadow: 0 0 0 3.5px rgba(139, 92, 246, 0.15) !important;
+        box-shadow: 0 0 0 3.5px rgba(124, 58, 237, 0.15) !important;
     }
 
-    /* Kustomisasi Tampilan Select2 Agar Serasi dengan Tema */
+    /* Kustomisasi Tampilan Select2 */
     .select2-container--bootstrap-5 .select2-selection {
         border-radius: 0 10px 10px 0 !important;
         border-color: #cbd5e1 !important;
@@ -64,10 +64,10 @@
 
     .select2-container--bootstrap-5.select2-container--focus .select2-selection {
         border-color: var(--purple-main) !important;
-        box-shadow: 0 0 0 3.5px rgba(139, 92, 246, 0.15) !important;
+        box-shadow: 0 0 0 3.5px rgba(124, 58, 237, 0.15) !important;
     }
 
-    /* UPLOAD FOTO AREA */
+    /* AREA UNGGAH FOTO */
     .file-upload-box {
         border: 2px dashed #cbd5e1;
         border-radius: 14px;
@@ -94,9 +94,9 @@
         cursor: pointer;
     }
 
-    /* BUTTONS */
+    /* TOMBOL */
     .btn-gradient-submit {
-        background: linear-gradient(135deg, #7c3aed, #a855f7);
+        background: linear-gradient(135deg, #7c3aed, #9333ea);
         border: none;
         color: white;
         padding: 0.7rem 1.8rem;
@@ -131,10 +131,10 @@
 
 <div class="row g-4">
 
-    {{-- UPLOAD FOTO PRODUK --}}
+    {{-- UNGGAH FOTO PRODUK --}}
     <div class="col-12">
         <div class="p-4 form-card-section">
-            <label class="form-label-custom">{{ __('product_photo') }}</label>
+            <label class="form-label-custom">Foto Produk</label>
 
             <div class="file-upload-box mb-2" id="dropArea">
                 <input type="file"
@@ -143,13 +143,13 @@
                     onchange="previewImage(this)"
                     accept="image/*">
 
-                <div id="uploadPlaceholder">
-                    <i class="bi bi-cloud-arrow-up fs-1 text-purple" style="color: var(--purple-main);"></i>
-                    <p class="mb-1 mt-2 fw-semibold text-dark">{{ __('upload_photo_hint') }}</p>
-                    <span class="text-muted small">{{ __('upload_photo_format') }}</span>
+                <div id="uploadPlaceholder" style="{{ isset($produk) && $produk->foto ? 'display:none;' : '' }}">
+                    <i class="bi bi-cloud-arrow-up fs-1" style="color: var(--purple-main);"></i>
+                    <p class="mb-1 mt-2 fw-semibold text-dark">Klik atau seret foto ke sini untuk mengunggah</p>
+                    <span class="text-muted small">Format yang didukung: JPG, PNG, WEBP (Maksimal 2MB)</span>
                 </div>
 
-                {{-- PREVIEW FOTO --}}
+                {{-- PRATINJAU FOTO --}}
                 <div id="previewContainer" class="mt-2" style="{{ isset($produk) && $produk->foto ? '' : 'display:none;' }}">
                     <div class="position-relative d-inline-block">
                         <img id="preview"
@@ -157,8 +157,8 @@
                             class="rounded-3 shadow-sm border"
                             style="width: 120px; height: 120px; object-fit: cover;">
 
-                        <span class="badge bg-purple-soft text-purple position-absolute bottom-0 start-50 translate-middle-x mb-1 px-2 py-1" style="font-size: 0.7rem; background: var(--purple-soft); color: var(--purple-dark);">
-                            {{ __('preview') }}
+                        <span class="badge position-absolute bottom-0 start-50 translate-middle-x mb-1 px-2 py-1" style="font-size: 0.7rem; background: var(--purple-soft); color: var(--purple-dark);">
+                            Pratinjau
                         </span>
                     </div>
                 </div>
@@ -172,12 +172,11 @@
         </div>
     </div>
 
-
-    {{-- JENIS / KATEGORI PRODUK (Dropdown + Bisa Ketik Cari/Tambah Baru) --}}
+    {{-- KATEGORI PRODUK --}}
     <div class="col-12">
         <div class="p-4 form-card-section">
             <label class="form-label-custom">
-                {{ __('product_category_label') }} <span class="text-danger">*</span>
+                Kategori Produk <span class="text-danger">*</span>
             </label>
             <div class="input-group input-group-custom">
                 <span class="input-group-text"><i class="bi bi-tags"></i></span>
@@ -186,14 +185,13 @@
                     class="form-select form-control-custom @error('jenis') is-invalid @enderror"
                     required>
                     <option value="" disabled {{ old('jenis', $produk->jenis ?? '') == '' ? 'selected' : '' }}>
-                        {{ __('select_category_placeholder') }}
+                        Pilih Kategori Produk
                     </option>
                     @foreach($jenisList as $jenis)
                     <option value="{{ $jenis->nama }}" {{ old('jenis', $produk->jenis ?? '') == $jenis->nama ? 'selected' : '' }}>
                         {{ $jenis->nama }}
                     </option>
                     @endforeach
-                    {{-- Jika ada nilai kustom dari old input yang tidak ada di opsi --}}
                     @if(old('jenis') && !$jenisList->contains('nama', old('jenis')))
                     <option value="{{ old('jenis') }}" selected>{{ old('jenis') }}</option>
                     @endif
@@ -207,19 +205,18 @@
         </div>
     </div>
 
-
     {{-- NAMA PRODUK --}}
     <div class="col-12">
         <div class="p-4 form-card-section">
             <label class="form-label-custom">
-                {{ __('product_name_label') }} <span class="text-danger">*</span>
+                Nama Produk <span class="text-danger">*</span>
             </label>
             <div class="input-group input-group-custom">
                 <span class="input-group-text"><i class="bi bi-box-seam"></i></span>
                 <input type="text"
                     name="name"
                     class="form-control form-control-custom @error('name') is-invalid @enderror"
-                    placeholder="{{ __('product_name_placeholder') }}"
+                    placeholder="Masukkan nama produk"
                     value="{{ old('name', $produk->nama ?? '') }}"
                     required>
             </div>
@@ -231,12 +228,11 @@
         </div>
     </div>
 
-
     {{-- HARGA BELI & HARGA JUAL --}}
     <div class="col-md-6">
         <div class="p-4 form-card-section h-100">
             <label class="form-label-custom">
-                {{ __('purchase_price_label') }} <span class="text-danger">*</span>
+                Harga Beli <span class="text-danger">*</span>
             </label>
             <div class="input-group input-group-custom mb-2">
                 <span class="input-group-text">Rp</span>
@@ -246,7 +242,7 @@
                     class="form-control form-control-custom @error('purchase_price') is-invalid @enderror"
                     placeholder="0"
                     value="{{ old('purchase_price', $produk->harga_beli ?? '') }}"
-                    oninput="hitungskalaku()"
+                    oninput="hitungMargin()"
                     required>
             </div>
             @error('purchase_price')
@@ -260,7 +256,7 @@
     <div class="col-md-6">
         <div class="p-4 form-card-section h-100">
             <label class="form-label-custom">
-                {{ __('selling_price_label') }} <span class="text-danger">*</span>
+                Harga Jual <span class="text-danger">*</span>
             </label>
             <div class="input-group input-group-custom mb-2">
                 <span class="input-group-text">Rp</span>
@@ -270,13 +266,13 @@
                     class="form-control form-control-custom @error('selling_price') is-invalid @enderror"
                     placeholder="0"
                     value="{{ old('selling_price', $produk->harga_jual ?? '') }}"
-                    oninput="hitungskalaku()"
+                    oninput="hitungMargin()"
                     required>
             </div>
 
             {{-- ESTIMASI MARGIN KEUNTUNGAN --}}
             <div id="marginInfo" class="small fw-semibold text-muted">
-                {{ __('estimated_profit') }}: <span id="marginValue" class="text-success">Rp 0</span>
+                Estimasi Keuntungan: <span id="marginValue" class="text-success">Rp 0</span>
             </div>
 
             @error('selling_price')
@@ -287,12 +283,11 @@
         </div>
     </div>
 
-
     {{-- STOK --}}
     <div class="col-12">
         <div class="p-4 form-card-section">
             <label class="form-label-custom">
-                {{ __('stock_label') }} <span class="text-danger">*</span>
+                Stok Produk <span class="text-danger">*</span>
             </label>
             <div class="input-group input-group-custom">
                 <span class="input-group-text"><i class="bi bi-stack"></i></span>
@@ -314,12 +309,11 @@
 
 </div>
 
-
-{{-- TOMBOL AKSES --}}
+{{-- TOMBOL AKSI --}}
 <div class="d-flex align-items-center gap-3 mt-4">
     <button type="submit" class="btn btn-gradient-submit d-inline-flex align-items-center gap-2">
         <i class="bi bi-check-circle-fill"></i>
-        <span>{{ __('save_product') }}</span>
+        <span>Simpan Produk</span>
     </button>
 
     <a href="{{ route('produk.index') }}" class="btn btn-soft-secondary d-inline-flex align-items-center gap-2">
@@ -328,13 +322,12 @@
     </a>
 </div>
 
-
-{{-- JS JQUERY & SELECT2 --}}
+{{-- JAVASCRIPT JQUERY & SELECT2 --}}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
-    // Preview gambar
+    // Pratinjau gambar
     function previewImage(input) {
         const preview = document.getElementById('preview');
         const container = document.getElementById('previewContainer');
@@ -349,8 +342,8 @@
         }
     }
 
-    // Kalkulasi Margin Profit
-    function hitungskalaku() {
+    // Kalkulasi Margin Keuntungan
+    function hitungMargin() {
         const beli = parseFloat(document.getElementById('hargaBeli').value) || 0;
         const jual = parseFloat(document.getElementById('hargaJual').value) || 0;
         const profit = jual - beli;
@@ -371,15 +364,15 @@
     }
 
     $(document).ready(function() {
-        hitungskalaku();
+        hitungMargin();
 
-        // Inisialisasi Select2 dengan data dinamis dari database
+        // Inisialisasi Select2
         $('#jenisSelect2').select2({
             theme: 'bootstrap-5',
-            tags: false, // Tidak mengizinkan pengguna mengetik kustom baru
-            placeholder: '{{ __('select_category_placeholder') }}',
+            tags: false,
+            placeholder: 'Pilih Kategori Produk',
             allowClear: true,
-            minimumResultsForSearch: Infinity // Disable search box agar tidak bisa diketik
+            minimumResultsForSearch: Infinity
         });
     });
 </script>
