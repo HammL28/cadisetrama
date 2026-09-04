@@ -11,13 +11,6 @@ use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
-    // ==========================================
-    // FITUR PROFIL (Semua Role)
-    // ==========================================
-
-    /**
-     * Menampilkan halaman profil / data diri ala programmer
-     */
     public function profile()
     {
         /** @var \App\Models\User $user */
@@ -25,10 +18,6 @@ class UserController extends Controller
 
         return view('users.profile', compact('user'));
     }
-
-    /**
-     * Memperbarui data profil (Nama, Email, Foto)
-     */
     public function updateProfile(Request $request)
     {
         /** @var \App\Models\User $user */
@@ -56,10 +45,6 @@ class UserController extends Controller
 
         return redirect()->back()->with('success', 'User profile successfully updated!');
     }
-
-    /**
-     * Memperbarui password user
-     */
     public function updatePassword(Request $request)
     {
         $request->validate([
@@ -79,11 +64,6 @@ class UserController extends Controller
 
         return redirect()->back()->with('success', 'Password updated successfully!');
     }
-
-    // ==========================================
-    // FITUR CRUD ADMIN (Pengelolaan User)
-    // ==========================================
-
     public function index(Request $request)
     {
         $query = User::with('role');

@@ -617,24 +617,43 @@
     {{-- Penanganan Pop-Up SweetAlert2 --}}
     @if(session('demo_link'))
         Swal.fire({
-            icon: 'info',
-            title: 'Mode Testing (Dev)',
             html: `
-                <p class="mb-3">{{ session('status') ?? 'Instruksi reset password berhasil dibuat.' }}</p>
-                <div class="p-3 bg-light rounded-3 text-start border">
-                    <small class="text-muted d-block mb-2"><strong>[Simulasi Testing]</strong> Karena email tidak dikirim sungguhan, klik tombol di bawah untuk melanjutkan:</small>
-                    <a href="{{ session('demo_link') }}" class="btn text-white w-100 fw-semibold" style="background-color: #7c3aed;">
-                        <i class="bi bi-shield-lock me-1"></i> Buka Form Reset Password
+                <div class="p-2 text-center">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 64px; height: 64px; background: #f3e8ff; color: #7c3aed;">
+                        <i class="bi bi-envelope-check-fill fs-2"></i>
+                    </div>
+                    <h4 class="fw-bold mb-2" style="color: #2e1065;">Instruksi Terkirim</h4>
+                    <p class="text-muted small mb-4">
+                        {{ session('status') ?? 'Kami telah menyiapkan tautan pemulihan kata sandi untuk akun Anda.' }}
+                    </p>
+                    
+                    <div class="p-3 text-start rounded-3 mb-4" style="background-color: #faf5ff; border: 1px dashed #c084fc;">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <i class="bi bi-info-circle-fill" style="color: #7c3aed;"></i>
+                            <span class="fw-semibold text-dark small">Sistem Lingkungan Pengembang</span>
+                        </div>
+                        <p class="text-secondary mb-0" style="font-size: 0.8rem; line-height: 1.4;">
+                            Pengiriman email nyata dinonaktifkan. Silakan pergunakan tombol di bawah untuk menyimulasikan pembukaan tautan dari email.
+                        </p>
+                    </div>
+
+                    <a href="{{ session('demo_link') }}" class="btn text-white w-100 fw-semibold py-2 d-flex align-items-center justify-content-center gap-2 shadow-sm" style="background: linear-gradient(135deg, #6d28d9 0%, #7c3aed 100%); border-radius: 10px;">
+                        <i class="bi bi-shield-lock-fill"></i>
+                        <span>Lanjutkan Reset Kata Sandi</span>
                     </a>
                 </div>
             `,
             showConfirmButton: false,
             showCloseButton: true,
-            customClass: { popup: 'rounded-4' }
+            padding: '1.5rem',
+            customClass: { 
+                popup: 'rounded-4 border-0 shadow-lg' 
+            }
         });
     @elseif(session('status'))
         Swal.fire({
             icon: 'info',
+            iconColor: '#7c3aed',
             title: 'Informasi',
             text: "{{ session('status') }}",
             confirmButtonColor: '#7c3aed',
