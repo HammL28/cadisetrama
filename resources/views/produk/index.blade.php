@@ -283,6 +283,7 @@
         border-radius: 12px;
         background-color: var(--icon-bg);
         color: var(--icon-color);
+        border: 1px solid var(--card-border);
     }
 
     .swal2-popup {
@@ -342,6 +343,30 @@
         color: var(--text-muted) !important;
         font-size: 0.875rem;
         font-weight: 500;
+    }
+
+    /* PRINT STYLES */
+    @media print {
+        body {
+            background: #ffffff !important;
+        }
+        .dashboard-header-banner,
+        .btn,
+        .card-header,
+        .card-footer,
+        .btn-action-purple,
+        .btn-action-edit,
+        .btn-action-delete {
+            display: none !important;
+        }
+        .card {
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .table-custom th, 
+        .table-custom td {
+            color: #000000 !important;
+        }
     }
 </style>
 
@@ -541,13 +566,16 @@
                             </td>
                             <td>
                                 @if(!empty($product->foto))
-                                    <img src="{{ Str::startsWith($product->foto, ['http://', 'https://']) ? $product->foto : asset('storage/' . $product->foto) }}" 
+                                    <img src="{{ asset('storage/' . $product->foto) }}" 
                                          alt="{{ $product->nama }}" 
                                          class="product-thumb shadow-sm border"
-                                         onerror="this.onerror=null; this.src='https://placehold.co/100x100?text=No+Image';">
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="product-thumb-placeholder align-items-center justify-content-center shadow-sm" style="display: none;">
+                                        <i class="bi bi-box-seam fs-5" style="color: var(--icon-color);"></i>
+                                    </div>
                                 @else
-                                    <div class="product-thumb-placeholder d-flex align-items-center justify-content-center fw-bold shadow-sm">
-                                        <i class="bi bi-image" style="color: var(--icon-color);"></i>
+                                    <div class="product-thumb-placeholder d-flex align-items-center justify-content-center shadow-sm">
+                                        <i class="bi bi-box-seam fs-5" style="color: var(--icon-color);"></i>
                                     </div>
                                 @endif
                             </td>
@@ -744,7 +772,7 @@
         const tableRows = document.querySelectorAll('.product-row');
 
         if (searchInput) {
-            searchInput.addEventListener('keyup', function() {
+            searchInput.addEventListener('input', function() {
                 const query = this.value.toLowerCase().trim();
 
                 tableRows.forEach(function(row) {

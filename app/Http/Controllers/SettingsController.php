@@ -24,45 +24,64 @@ class SettingsController extends Controller
     {
         $user = Auth::user();
 
-        // Validasi input
-        $validatedData = $request->validate([
-            'store_name'      => 'nullable|string|max:255',
-            'store_phone'     => 'nullable|string|max:20',
-            'store_address'   => 'nullable|string',
-            'tax_rate'        => 'nullable|numeric|min:0|max:100',
-            'service_charge'  => 'nullable|numeric|min:0|max:100',
+        // Validasi input dari form
+        $request->validate([
+            'store_name'           => 'nullable|string|max:255',
+            'receipt_header_title' => 'nullable|string|max:255',
+            'store_phone'          => 'nullable|string|max:20',
+            'receipt_phone'        => 'nullable|string|max:20',
+            'store_address'        => 'nullable|string',
+            'receipt_address'      => 'nullable|string',
+            'tax_rate'             => 'nullable|numeric|min:0|max:100',
+            'service_charge'       => 'nullable|numeric|min:0|max:100',
         ]);
+
+        // Tangkap input (prioritaskan input form baru, lalu form lama, lalu data eksisting)
+        $storeName    = $request->receipt_header_title ?? $request->store_name ?? $user->store_name;
+        $storePhone   = $request->receipt_phone ?? $request->store_phone ?? $user->store_phone;
+        $storeAddress = $request->receipt_address ?? $request->store_address ?? $user->store_address;
 
         // Debug log sebelum update
         Log::info('Updating settings for User ID: ' . $user->id);
 
-        // Update data profil toko, pajak, metode pembayaran, dan notifikasi
+        // Update data profil toko, pajak, metode pembayaran, dan opsi struk
         $user->update([
-            // Profil Toko
-            'store_name'          => $request->store_name,
-            'store_phone'         => $request->store_phone,
-            'store_address'       => $request->store_address,
+            // Profil Toko Utama
+            'store_name'                   => $storeName,
+            'store_phone'                  => $storePhone,
+            'store_address'                => $storeAddress,
 
             // Pajak & Biaya
-            'tax_rate'            => $request->tax_rate ?? 0,
-            'service_charge'      => $request->service_charge ?? 0,
-            'tax_inclusive'       => $request->has('tax_inclusive'),
+            'tax_rate'                     => $request->tax_rate ?? $user->tax_rate ?? 0,
+            'service_charge'               => $request->service_charge ?? $user->service_charge ?? 0,
+            'tax_inclusive'                => $request->has('tax_inclusive'),
 
             // Metode Pembayaran
-            'enable_cash'         => $request->has('enable_cash'),
-            'enable_qris'         => $request->has('enable_qris'),
-            'enable_transfer'     => $request->has('enable_transfer'),
+            'enable_cash'                  => $request->has('enable_cash'),
+            'enable_qris'                  => $request->has('enable_qris'),
+            'enable_transfer'              => $request->has('enable_transfer'),
 
             // Notifikasi
-            'email_notifications' => $request->has('email_notifications'),
-            'sales_notifications' => $request->has('sales_notifications'),
-            'stock_notifications' => $request->has('stock_notifications'),
+            'email_notifications'          => $request->has('email_notifications'),
+            'sales_notifications'          => $request->has('sales_notifications'),
+            'stock_notifications'          => $request->has('stock_notifications'),
+
+            // Opsi Tambahan Struk
+            'receipt_footer_msg'           => $request->receipt_footer_msg ?? 'Terima Kasih!',
+            'receipt_social'               => $request->receipt_social,
+            'show_qr_on_receipt'           => $request->has('show_qr_on_receipt'),
+            'paper_size'                   => $request->paper_size ?? '58mm',
+            'auto_print_receipt'           => $request->has('auto_print_receipt'),
+            'open_cash_drawer'             => $request->has('open_cash_drawer'),
+            'show_cashier_name'            => $request->has('show_cashier_name'),
+            'show_customer_name'           => $request->has('show_customer_name'),
+            'show_tax_discount_breakdown'  => $request->has('show_tax_discount_breakdown'),
         ]);
 
         // Debug log setelah update
         Log::info('Settings updated successfully for User ID: ' . $user->id);
 
-        return redirect()->route('settings.index')->with('success', 'Pengaturan berhasil diperbarui!');
+        return redirect()->back()->with('success', 'Pengaturan berhasil diperbarui!');
     }
 
     /**

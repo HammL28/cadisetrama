@@ -8,6 +8,7 @@ use App\Models\Produk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class ItemPenjualanController extends Controller
 {
@@ -31,59 +32,67 @@ class ItemPenjualanController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-{
-    $request->validate([
-        'product_id' => 'required|exists:produk,id',
-        'quantity'   => 'required|integer|min:1'
-    ]);
+    {
+        $request->validate([
+            'product_id' => 'required|exists:produk,id',
+            'quantity'   => 'required|integer|min:1'
+        ]);
 
-    DB::transaction(function () use ($request) {
+        try {
+            DB::transaction(function () use ($request) {
 
-        $sale = Penjualan::where('user_id', Auth::id())
-            ->where('status', 'OPEN')
-            ->firstOrFail();
+                $sale = Penjualan::where('user_id', Auth::id())
+                    ->where('status', 'OPEN')
+                    ->firstOrFail();
 
-        $product = Produk::lockForUpdate()->findOrFail($request->product_id);
+                $product = Produk::lockForUpdate()->findOrFail($request->product_id);
 
-        // ❗ Cek stok
-        if ($product->stok < $request->quantity) {
-            return redirect()->route('penjualan.create')->with('errors', 'Produk stok tidak mencukupi');
+                // Cek ketersediaan stok
+                if ($product->stok < $request->quantity) {
+                    throw ValidationException::withMessages([
+                        'stok' => 'Stok produk ' . $product->nama . ' tidak mencukupi.'
+                    ]);
+                }
+
+                // Kurangi stok produk
+                $product->decrement('stok', $request->quantity);
+
+                // Update / Insert item penjualan
+                $item = ItemPenjualan::where('penjualan_id', $sale->id)
+                    ->where('produk_id', $product->id)
+                    ->lockForUpdate()
+                    ->first();
+
+                if ($item) {
+                    // UPDATE
+                    $item->kuantitas += $request->quantity;
+                } else {
+                    // CREATE
+                    $item = new ItemPenjualan([
+                        'penjualan_id' => $sale->id,
+                        'produk_id'    => $product->id,
+                        'kuantitas'    => $request->quantity,
+                        'harga_satuan' => $product->harga_jual,
+                    ]);
+                }
+
+                // Hitung subtotal setelah kuantitas pasti
+                $item->subtotal = $item->kuantitas * $item->harga_satuan;
+                $item->save();
+
+                // Recalculate total pembayaran
+                $sale->total_pembayaran = $sale->itemPenjualan()->sum('subtotal');
+                $sale->save();
+            });
+
+            return back()->with('success', 'Produk berhasil ditambahkan ke keranjang.');
+
+        } catch (ValidationException $e) {
+            return back()->with('errors', $e->getMessage());
+        } catch (\Exception $e) {
+            return back()->with('errors', 'Terjadi kesalahan saat menambahkan barang.');
         }
-
-        // 🔽 Kurangi stok
-        $product->decrement('stok', $request->quantity);
-
-        // ➕ Update / insert item penjualan
-$item = ItemPenjualan::where('penjualan_id', $sale->id)
-    ->where('produk_id', $product->id)
-    ->lockForUpdate()
-    ->first();
-
-if ($item) {
-    // UPDATE
-    $item->kuantitas += $request->quantity;
-} else {
-    // CREATE
-    $item = new ItemPenjualan([
-        'penjualan_id' => $sale->id,
-        'produk_id'    => $product->id,
-        'kuantitas'    => $request->quantity,
-        'harga_satuan' => $product->harga_jual,
-    ]);
-}
-
-// hitung subtotal SETELAH kuantitas fix
-$item->subtotal = $item->kuantitas * $item->harga_satuan;
-$item->save();
-
-// 🧮 TOTAL PEMBAYARAN
-$sale->total_pembayaran = $sale->itemPenjualan()->sum('subtotal');
-$sale->save();
-
-});
-
-return back();
-}
+    }
 
     /**
      * Display the specified resource.
@@ -105,70 +114,102 @@ return back();
      * Update the specified resource in storage.
      */
     public function update(Request $request, ItemPenjualan $itempenjualan)
-{
-    $request->validate([
-        'quantity' => 'required|integer|min:1'
-    ]);
+    {
+        try {
+            DB::transaction(function () use ($request, $itempenjualan) {
 
-    DB::transaction(function () use ($request, $itempenjualan) {
+                // Tentukan kuantitas baru berdasarkan aksi tombol (+/-) atau input manual
+                $newQuantity = $itempenjualan->kuantitas;
 
-        $produk = $itempenjualan->produk()->lockForUpdate()->first();
+                if ($request->has('action')) {
+                    if ($request->action === 'increase') {
+                        $newQuantity += 1;
+                    } elseif ($request->action === 'decrease') {
+                        $newQuantity = max(1, $newQuantity - 1);
+                    }
+                } elseif ($request->has('quantity')) {
+                    $request->validate([
+                        'quantity' => 'required|integer|min:1'
+                    ]);
+                    $newQuantity = (int) $request->quantity;
+                }
 
-        $selisih = $request->quantity - $itempenjualan->kuantitas;
+                $selisih = $newQuantity - $itempenjualan->kuantitas;
 
-        // 🔼 Jika qty bertambah = kurangi stok
-        if ($selisih > 0) {
-            if ($produk->stok < $selisih) {
-                return redirect()->route('penjualan.create')->with('errors', 'Stok tidak mencukupi');
-            }
-            $produk->decrement('stok', $selisih);
+                if ($selisih === 0) {
+                    return;
+                }
+
+                $produk = $itempenjualan->produk()->lockForUpdate()->first();
+
+                // Jika qty bertambah = kurangi stok produk
+                if ($selisih > 0) {
+                    if ($produk->stok < $selisih) {
+                        throw ValidationException::withMessages([
+                            'stok' => 'Stok produk ' . $produk->nama . ' tidak mencukupi.'
+                        ]);
+                    }
+                    $produk->decrement('stok', $selisih);
+                }
+
+                // Jika qty berkurang = kembalikan stok produk
+                if ($selisih < 0) {
+                    $produk->increment('stok', abs($selisih));
+                }
+
+                // Update item penjualan
+                $itempenjualan->update([
+                    'kuantitas' => $newQuantity,
+                    'subtotal'  => $newQuantity * $itempenjualan->harga_satuan
+                ]);
+
+                // Update total pembayaran di tabel penjualan
+                $sale = $itempenjualan->penjualan;
+                $sale->update([
+                    'total_pembayaran' => $sale->itemPenjualan()->sum('subtotal')
+                ]);
+            });
+
+            return back();
+
+        } catch (ValidationException $e) {
+            return back()->with('errors', $e->getMessage());
+        } catch (\Exception $e) {
+            return back()->with('errors', 'Gagal memperbarui jumlah barang.');
         }
-
-        // 🔽 Jika qty berkurang = kembalikan stok
-        if ($selisih < 0) {
-            $produk->increment('stok', abs($selisih));
-        }
-
-        // 🔄 Update item
-        $itempenjualan->update([
-            'kuantitas' => $request->quantity,
-            'subtotal' => $request->quantity * $itempenjualan->harga_satuan
-        ]);
-
-        // 🔁 Update total penjualan
-        $itempenjualan->penjualan->update([
-            'total_pembayaran' =>
-                $itempenjualan->penjualan->itemPenjualan()->sum('subtotal')
-        ]);
-    });
-
-    return back();
-}
+    }
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(ItemPenjualan $itempenjualan)
-{
-    $this->authorize('delete', $itempenjualan);
-    
-    DB::transaction(function () use ($itempenjualan) {
+    {
+        $this->authorize('delete', $itempenjualan);
 
-        $produk = $itempenjualan->produk;
-        $sale   = $itempenjualan->penjualan;
+        try {
+            DB::transaction(function () use ($itempenjualan) {
 
-        // 🔼 Kembalikan stok
-        $produk->increment('stok', $itempenjualan->kuantitas);
+                $produk = $itempenjualan->produk()->lockForUpdate()->first();
+                $sale   = $itempenjualan->penjualan;
 
-        // ❌ Hapus item
-        $itempenjualan->delete();
+                // Kembalikan stok sesuai kuantitas item
+                if ($produk) {
+                    $produk->increment('stok', $itempenjualan->kuantitas);
+                }
 
-        // 🔄 Update total penjualan
-        $sale->update([
-            'total_pembayaran' => $sale->itemPenjualan()->sum('subtotal')
-        ]);
-    });
+                // Hapus item dari keranjang
+                $itempenjualan->delete();
 
-    return back();
-}
+                // Recalculate total penjualan
+                $sale->update([
+                    'total_pembayaran' => $sale->itemPenjualan()->sum('subtotal')
+                ]);
+            });
+
+            return back()->with('success', 'Item berhasil dihapus dari keranjang.');
+
+        } catch (\Exception $e) {
+            return back()->with('errors', 'Gagal menghapus item.');
+        }
+    }
 }

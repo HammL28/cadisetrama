@@ -45,35 +45,94 @@
         display: inline-block;
     }
 
-    /* CSS Khusus Mode Cetak / Print Struk */
+    /* Sembunyikan elemen cetak di mode layar biasa */
+    #receipt-print-area {
+        display: none;
+    }
+
+    /* PERBAIKAN CSS PRINT (SOLUSI LAYAR KOSONG & TOMBOL BURGER) */
     @media print {
-        .no-print, nav, .navbar {
+        @page {
+            size: portrait;
+            margin: 0mm;
+        }
+
+        /* Paksa browser mencetak background & warna */
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        /* Sembunyikan tampilan web internal & navbar/sidebar/tombol burger */
+        .container-web-view,
+        nav,
+        header,
+        footer,
+        aside,
+        .sidebar,
+        .navbar,
+        .navbar-toggler,
+        .btn-toggle,
+        #sidebarToggle,
+        button {
             display: none !important;
         }
-        body {
+
+        /* Paksa area struk tampil menutupi seluruh halaman print */
+        #receipt-print-area {
+            display: block !important;
+            position: fixed !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            max-width: 80mm !important; /* Sesuaikan 58mm atau 80mm sesuai lebar printer thermal */
+            padding: 5mm !important;
+            margin: 0 auto !important;
             background: #ffffff !important;
-            color: #000000 !important;
+            font-family: 'Courier New', Courier, monospace !important;
+            font-size: 11px !important;
+            z-index: 999999 !important;
+            box-sizing: border-box !important;
         }
-        .card-detail {
-            border: none !important;
-            box-shadow: none !important;
+
+        #receipt-print-area table {
+            width: 100% !important;
+            border-collapse: collapse !important;
         }
-        .banner-purple-gradient {
-            background: none !important;
-            color: #000000 !important;
-            padding: 0 !important;
-            border-bottom: 2px solid #000;
-            border-radius: 0 !important;
+
+        #receipt-print-area tr {
+            display: table-row !important;
         }
-        .banner-purple-gradient * {
-            color: #000000 !important;
+
+        #receipt-print-area td, 
+        #receipt-print-area th {
+            display: table-cell !important;
         }
     }
 </style>
 
-<div class="container py-4" style="padding-top: 5rem;">
+@php
+    $userPenjualan = $penjualan->user ?? Auth::user();
+    
+    $storeName = $userPenjualan->store_name ?? 'ILHAM JAYA HEBAT';
+    $storeAddress = $userPenjualan->store_address ?? 'JL.JL.JL.J';
+    $storePhone = $userPenjualan->store_phone ?? '087786888522';
 
-    {{-- HEADER BANNER --}}
+    // Ambil nama kasir
+    $cashierName = $userPenjualan->name ?? 'Kasir';
+
+    // Ambil Role Kasir tanpa merender Object/JSON
+    $roleRaw = $userPenjualan->role ?? 'STAFF';
+    if (is_object($roleRaw) || is_array($roleRaw)) {
+        $cashierRole = strtoupper($roleRaw->name ?? $roleRaw['name'] ?? 'STAFF');
+    } else {
+        $cashierRole = strtoupper((string) $roleRaw);
+    }
+@endphp
+
+{{-- TAMPILAN MONITOR / WEB --}}
+<div class="container py-4 container-web-view" style="padding-top: 5rem;">
+
     <div class="banner-purple-gradient p-4 rounded-4 mb-4 shadow-sm">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
             <div>
@@ -83,8 +142,7 @@
                 <p class="text-white opacity-75 small mb-0">Informasi rincian transaksi dan daftar barang yang dibeli.</p>
             </div>
             
-            {{-- ACTION BUTTONS --}}
-            <div class="d-flex align-items-center gap-2 no-print">
+            <div class="d-flex align-items-center gap-2">
                 <button onclick="window.print()" class="btn btn-light rounded-pill px-3 fw-semibold text-purple shadow-sm d-flex align-items-center gap-1">
                     <i class="bi bi-printer-fill"></i> Cetak Struk
                 </button>
@@ -96,8 +154,6 @@
     </div>
 
     <div class="row g-4">
-        
-        {{-- CARD INFORMASI TRANSAKSI + QR CODE --}}
         <div class="col-md-4">
             <div class="card border-0 card-detail h-100">
                 <div class="card-body p-4 d-flex flex-column justify-content-between">
@@ -118,7 +174,7 @@
 
                         <div class="mb-3">
                             <label class="text-muted small d-block">Kasir / Petugas</label>
-                            <span class="fw-semibold text-dark">{{ $penjualan->user->name ?? 'User Tidak Ditemukan' }}</span>
+                            <span class="fw-semibold text-dark">{{ $cashierName }} ({{ $cashierRole }})</span>
                         </div>
 
                         <div class="mb-3">
@@ -144,7 +200,6 @@
 
                     <hr class="text-muted opacity-25 my-3">
 
-                    {{-- QR CODE SECTION --}}
                     <div class="text-center pt-2">
                         <div class="qr-container shadow-sm mb-2">
                             <img src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data={{ urlencode(route('penjualan.show', $penjualan->id)) }}" 
@@ -159,7 +214,6 @@
             </div>
         </div>
 
-        {{-- TABEL ITEM PENJUALAN --}}
         <div class="col-md-8">
             <div class="card border-0 card-detail h-100">
                 <div class="card-body p-4">
@@ -181,7 +235,7 @@
                                 @forelse($penjualan->itemPenjualan as $item)
                                     <tr>
                                         <td>
-                                            <div class="fw-semibold text-dark">{{ $item->produk->nama ?? 'Produk Terhapus' }}</div>
+                                            <div class="fw-semibold text-dark">{{ $item->produk->nama ?? $item->produk->nama_produk ?? 'Produk Terhapus' }}</div>
                                         </td>
                                         <td class="text-end">Rp {{ number_format($item->harga_satuan ?? ($item->subtotal / max($item->kuantitas, 1)), 0, ',', '.') }}</td>
                                         <td class="text-center">
@@ -215,6 +269,79 @@
 
     </div>
 
+</div>
+
+{{-- AREA STRUK BERWARNA & TERISOLASI UNTUK PRINT --}}
+<div id="receipt-print-area">
+    <div style="text-align: center; border-bottom: 2px dashed #8b5cf6; padding-bottom: 8px; margin-bottom: 8px;">
+        <h3 style="margin: 0; font-size: 13px; font-weight: bold; text-transform: uppercase; color: #8b5cf6;">
+            {{ $storeName }}
+        </h3>
+        <p style="margin: 3px 0 0 0; font-size: 9px; color: #4b5563;">
+            {{ $storeAddress }}
+        </p>
+        <p style="margin: 1px 0 0 0; font-size: 9px; color: #4b5563;">
+            Telp / WA: {{ $storePhone }}
+        </p>
+    </div>
+
+    <table style="width: 100%; font-size: 9px; border-collapse: collapse; margin-bottom: 6px; color: #1f2937;">
+        <tr>
+            <td style="padding: 2px 0;">No. Trx:</td>
+            <td style="text-align: right; padding: 2px 0; font-weight: bold; color: #8b5cf6;">#{{ $penjualan->id }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 2px 0;">Tanggal:</td>
+            <td style="text-align: right; padding: 2px 0;">{{ $penjualan->created_at->format('d/m/Y H:i') }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 2px 0;">Kasir:</td>
+            <td style="text-align: right; padding: 2px 0; font-weight: bold;">{{ $cashierName }} ({{ $cashierRole }})</td>
+        </tr>
+        <tr>
+            <td style="padding: 2px 0;">Metode Bayar:</td>
+            <td style="text-align: right; padding: 2px 0; font-weight: bold; color: #8b5cf6;">
+                {{ strtoupper($penjualan->metode_pembayaran) }}
+            </td>
+        </tr>
+    </table>
+
+    <div style="border-top: 1px dashed #8b5cf6; margin: 6px 0;"></div>
+
+    <table style="width: 100%; font-size: 9px; border-collapse: collapse; color: #1f2937;">
+        @foreach($penjualan->itemPenjualan as $item)
+            <tr>
+                <td colspan="2" style="font-weight: bold; padding-top: 3px;">
+                    {{ $item->produk->nama ?? $item->produk->nama_produk ?? 'Produk' }}
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-bottom: 4px; color: #4b5563;">
+                    {{ $item->kuantitas }} x Rp {{ number_format($item->harga_satuan ?? ($item->subtotal / max($item->kuantitas, 1)), 0, ',', '.') }}
+                </td>
+                <td style="text-align: right; padding-bottom: 4px; font-weight: bold;">
+                    Rp {{ number_format($item->subtotal, 0, ',', '.') }}
+                </td>
+            </tr>
+        @endforeach
+    </table>
+
+    <div style="border-top: 1px dashed #8b5cf6; margin: 6px 0;"></div>
+
+    <table style="width: 100%; font-size: 10px; font-weight: bold; color: #8b5cf6;">
+        <tr>
+            <td>TOTAL BAYAR</td>
+            <td style="text-align: right;">Rp {{ number_format($penjualan->total_pembayaran, 0, ',', '.') }}</td>
+        </tr>
+    </table>
+
+    <div style="border-top: 2px dashed #8b5cf6; margin: 8px 0;"></div>
+
+    <div style="text-align: center; margin-top: 10px; font-size: 9px; color: #4b5563;">
+        <p style="margin: 0; font-weight: bold; color: #8b5cf6;">-- TERIMA KASIH --</p>
+        <p style="margin: 2px 0;">Barang yang sudah dibeli</p>
+        <p style="margin: 0;">tidak dapat ditukar / dikembalikan</p>
+    </div>
 </div>
 
 @endsection

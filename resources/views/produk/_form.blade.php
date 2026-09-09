@@ -94,6 +94,91 @@
         cursor: pointer;
     }
 
+    .file-upload-box.has-image {
+        border-style: solid;
+        border-color: var(--purple-main);
+        background-color: #ffffff;
+        padding: 1rem;
+        cursor: default;
+    }
+
+    .file-upload-box.has-image input[type="file"] {
+        display: none;
+    }
+
+    .file-upload-box.dragover {
+        border-color: var(--purple-main);
+        background-color: var(--purple-soft);
+        transform: scale(1.01);
+    }
+
+    .upload-preview-card {
+        display: flex;
+        align-items: center;
+        gap: 1.1rem;
+        text-align: left;
+    }
+
+    .preview-thumb-wrap {
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .preview-thumb {
+        width: 96px;
+        height: 96px;
+        object-fit: cover;
+        border-radius: 14px;
+        border: 2px solid var(--gray-border);
+        box-shadow: 0 4px 10px rgba(124, 58, 237, 0.15);
+    }
+
+    .preview-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .preview-filename {
+        font-weight: 600;
+        color: #2e1065;
+        font-size: 0.875rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 220px;
+    }
+
+    .preview-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+
+    .btn-file-action {
+        border: 1px solid var(--gray-border);
+        background: #fff;
+        color: var(--purple-dark);
+        font-size: 0.78rem;
+        font-weight: 600;
+        padding: 0.35rem 0.8rem;
+        border-radius: 50px;
+        transition: all 0.15s ease;
+        cursor: pointer;
+    }
+
+    .btn-file-action:hover {
+        background: var(--purple-soft);
+    }
+
+    .btn-file-action.danger {
+        color: #dc2626;
+        border-color: #fecaca;
+    }
+
+    .btn-file-action.danger:hover {
+        background: #fef2f2;
+    }
+
     /* TOMBOL */
     .btn-gradient-submit {
         background: linear-gradient(135deg, #7c3aed, #9333ea);
@@ -136,7 +221,7 @@
         <div class="p-4 form-card-section">
             <label class="form-label-custom">Foto Produk</label>
 
-            <div class="file-upload-box mb-2" id="dropArea">
+            <div class="file-upload-box mb-2 {{ isset($produk) && $produk->foto ? 'has-image' : '' }}" id="dropArea">
                 <input type="file"
                     name="foto"
                     id="fotoInput"
@@ -150,19 +235,33 @@
                 </div>
 
                 {{-- PRATINJAU FOTO --}}
-                <div id="previewContainer" class="mt-2" style="{{ isset($produk) && $produk->foto ? '' : 'display:none;' }}">
-                    <div class="position-relative d-inline-block">
-                        <img id="preview"
-                            src="{{ isset($produk) && $produk->foto ? asset('storage/' . $produk->foto) : '#' }}"
-                            class="rounded-3 shadow-sm border"
-                            style="width: 120px; height: 120px; object-fit: cover;">
-
-                        <span class="badge position-absolute bottom-0 start-50 translate-middle-x mb-1 px-2 py-1" style="font-size: 0.7rem; background: var(--purple-soft); color: var(--purple-dark);">
-                            Pratinjau
-                        </span>
+                <div id="previewContainer" style="{{ isset($produk) && $produk->foto ? '' : 'display:none;' }}">
+                    <div class="upload-preview-card">
+                        <div class="preview-thumb-wrap">
+                            <img id="preview"
+                                src="{{ isset($produk) && $produk->foto ? asset('storage/' . $produk->foto) : '#' }}"
+                                class="preview-thumb">
+                        </div>
+                        <div class="preview-info">
+                            <div class="preview-filename" id="previewFilename">
+                                {{ isset($produk) && $produk->foto ? basename($produk->foto) : '' }}
+                            </div>
+                            <span class="text-muted" style="font-size: 0.78rem;">Klik "Ganti Foto" untuk mengunggah yang baru</span>
+                            <div class="preview-actions">
+                                <button type="button" class="btn-file-action" onclick="document.getElementById('fotoInput').click()">
+                                    <i class="bi bi-arrow-repeat me-1"></i>Ganti Foto
+                                </button>
+                                <button type="button" class="btn-file-action danger" onclick="removeFoto()">
+                                    <i class="bi bi-trash3 me-1"></i>Hapus
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            {{-- Penanda foto dihapus (dibaca controller jika ingin hapus foto lama tanpa upload baru) --}}
+            <input type="hidden" name="hapus_foto" id="hapusFotoInput" value="0">
 
             @error('foto')
             <div class="text-danger small mt-1">
@@ -332,15 +431,68 @@
         const preview = document.getElementById('preview');
         const container = document.getElementById('previewContainer');
         const placeholder = document.getElementById('uploadPlaceholder');
+        const dropArea = document.getElementById('dropArea');
+        const filenameEl = document.getElementById('previewFilename');
+        const hapusFotoInput = document.getElementById('hapusFotoInput');
 
         const file = input.files[0];
 
         if (file) {
             preview.src = URL.createObjectURL(file);
+            filenameEl.textContent = file.name;
             container.style.display = 'block';
             placeholder.style.display = 'none';
+            dropArea.classList.add('has-image');
+            hapusFotoInput.value = '0';
         }
     }
+
+    // Hapus foto (baik foto lama dari server maupun yang baru dipilih)
+    function removeFoto() {
+        const input = document.getElementById('fotoInput');
+        const container = document.getElementById('previewContainer');
+        const placeholder = document.getElementById('uploadPlaceholder');
+        const dropArea = document.getElementById('dropArea');
+        const hapusFotoInput = document.getElementById('hapusFotoInput');
+
+        input.value = '';
+        container.style.display = 'none';
+        placeholder.style.display = 'block';
+        dropArea.classList.remove('has-image');
+        hapusFotoInput.value = '1';
+    }
+
+    // Drag & drop
+    (function() {
+        const dropArea = document.getElementById('dropArea');
+        const fotoInput = document.getElementById('fotoInput');
+
+        ['dragenter', 'dragover'].forEach(evt => {
+            dropArea.addEventListener(evt, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (!dropArea.classList.contains('has-image')) {
+                    dropArea.classList.add('dragover');
+                }
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(evt => {
+            dropArea.addEventListener(evt, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropArea.classList.remove('dragover');
+            });
+        });
+
+        dropArea.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            if (files.length && !dropArea.classList.contains('has-image')) {
+                fotoInput.files = files;
+                previewImage(fotoInput);
+            }
+        });
+    })();
 
     // Kalkulasi Margin Keuntungan
     function hitungMargin() {

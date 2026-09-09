@@ -363,7 +363,6 @@
 <div class="sidebar-wrapper" id="sidebar">
     <!-- HEADER -->
     <div class="sidebar-header">
-       
         <div class="sidebar-brand-text">POS ILHAM</div>
     </div>
 
@@ -414,6 +413,16 @@
             </a>
         </li>
 
+        {{-- MENU PENGATURAN TOKO (Admin Only) --}}
+        @if(Auth::check() && strtolower($userRole) === 'admin')
+        <li class="sidebar-menu-item">
+            <a class="sidebar-menu-link {{ Request::is('settings*') ? 'active' : '' }}" href="{{ route('settings.index') }}">
+                <i class="bi bi-gear-fill sidebar-menu-icon"></i>
+                <span class="sidebar-menu-text">{{ __('Pengaturan Toko') }}</span>
+            </a>
+        </li>
+        @endif
+
         {{-- MENU AKUN --}}
         <li class="sidebar-menu-item mt-3">
             <div class="sidebar-menu-text px-3 mb-2" style="opacity: 0.7; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
@@ -427,8 +436,6 @@
                 <span class="sidebar-menu-text">{{ __('Profile') }}</span>
             </a>
         </li>
-
-       
 
         @if(Auth::check() && Auth::user()->role && (Auth::user()->role->name === 'admin' || Auth::user()->role->NAME === 'ADMIN'))
         <li class="sidebar-menu-item">

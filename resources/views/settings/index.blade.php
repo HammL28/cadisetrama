@@ -247,17 +247,17 @@
 
                         <div class="mb-3">
                             <label for="receipt_header_title" class="form-label">Nama Toko / Judul Struk</label>
-                            <input type="text" name="receipt_header_title" id="receipt_header_title" class="form-control" placeholder="Toko Maju Jaya POS" value="{{ old('receipt_header_title', $user->receipt_header_title ?? '') }}">
+                            <input type="text" name="receipt_header_title" id="receipt_header_title" class="form-control" placeholder="Toko Maju Jaya POS" value="{{ old('receipt_header_title', $user->store_name ?? '') }}">
                         </div>
 
                         <div class="mb-3">
                             <label for="receipt_address" class="form-label">Alamat Toko</label>
-                            <textarea name="receipt_address" id="receipt_address" class="form-control" rows="2" placeholder="Jl. Sudirman No. 123, Jakarta">{{ old('receipt_address', $user->receipt_address ?? '') }}</textarea>
+                            <textarea name="receipt_address" id="receipt_address" class="form-control" rows="2" placeholder="Jl. Sudirman No. 123, Jakarta">{{ old('receipt_address', $user->store_address ?? '') }}</textarea>
                         </div>
 
                         <div class="mb-3">
                             <label for="receipt_phone" class="form-label">Nomor Telepon / WhatsApp</label>
-                            <input type="text" name="receipt_phone" id="receipt_phone" class="form-control" placeholder="0812-3456-7890" value="{{ old('receipt_phone', $user->receipt_phone ?? '') }}">
+                            <input type="text" name="receipt_phone" id="receipt_phone" class="form-control" placeholder="0812-3456-7890" value="{{ old('receipt_phone', $user->store_phone ?? '') }}">
                         </div>
                     </div>
                 </div>
