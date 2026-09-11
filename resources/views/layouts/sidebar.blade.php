@@ -371,7 +371,7 @@
         <li class="sidebar-menu-item">
             <a class="sidebar-menu-link {{ Request::is('dashboard*') ? 'active' : '' }}" href="{{ route('dashboard') }}">
                 <i class="bi bi-grid-1x2-fill sidebar-menu-icon"></i>
-                <span class="sidebar-menu-text">{{ __('Dashboard') }}</span>
+                <span class="sidebar-menu-text">Beranda</span>
             </a>
         </li>
 
@@ -384,24 +384,26 @@
         <li class="sidebar-menu-item">
             <a class="sidebar-menu-link {{ Request::is('admin/users*') ? 'active' : '' }}" href="{{ route('admin.users') }}">
                 <i class="bi bi-people-fill sidebar-menu-icon"></i>
-                <span class="sidebar-menu-text">{{ __('Users') }}</span>
+                <span class="sidebar-menu-text">Pengguna</span>
             </a>
         </li>
         @endif
+
+        
+        {{-- MENU JENIS (Admin & Kasir) --}}
+        <li class="sidebar-menu-item">
+            <a class="sidebar-menu-link {{ Request::is('jenis*') ? 'active' : '' }}" href="{{ route('jenis.index') }}">
+                <i class="bi bi-tags-fill sidebar-menu-icon"></i>
+                <span class="sidebar-menu-text">Jenis</span>
+            </a>
+        </li>
+
 
         {{-- MENU PRODUK (Admin & Kasir) --}}
         <li class="sidebar-menu-item">
             <a class="sidebar-menu-link {{ Request::is('produk*') ? 'active' : '' }}" href="{{ route('produk.index') }}">
                 <i class="bi bi-box-seam-fill sidebar-menu-icon"></i>
-                <span class="sidebar-menu-text">{{ __('Products') }}</span>
-            </a>
-        </li>
-
-        {{-- MENU JENIS (Admin & Kasir) --}}
-        <li class="sidebar-menu-item">
-            <a class="sidebar-menu-link {{ Request::is('jenis*') ? 'active' : '' }}" href="{{ route('jenis.index') }}">
-                <i class="bi bi-tags-fill sidebar-menu-icon"></i>
-                <span class="sidebar-menu-text">{{ __('Jenis') }}</span>
+                <span class="sidebar-menu-text">Produk</span>
             </a>
         </li>
 
@@ -409,7 +411,7 @@
         <li class="sidebar-menu-item">
             <a class="sidebar-menu-link {{ Request::is('penjualan*') ? 'active' : '' }}" href="{{ route('penjualan.index') }}">
                 <i class="bi bi-cart-check-fill sidebar-menu-icon"></i>
-                <span class="sidebar-menu-text">{{ __('Penjualan') }}</span>
+                <span class="sidebar-menu-text">Penjualan</span>
             </a>
         </li>
 
@@ -418,7 +420,7 @@
         <li class="sidebar-menu-item">
             <a class="sidebar-menu-link {{ Request::is('settings*') ? 'active' : '' }}" href="{{ route('settings.index') }}">
                 <i class="bi bi-gear-fill sidebar-menu-icon"></i>
-                <span class="sidebar-menu-text">{{ __('Pengaturan Toko') }}</span>
+                <span class="sidebar-menu-text">Pengaturan Toko</span>
             </a>
         </li>
         @endif
@@ -426,14 +428,14 @@
         {{-- MENU AKUN --}}
         <li class="sidebar-menu-item mt-3">
             <div class="sidebar-menu-text px-3 mb-2" style="opacity: 0.7; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
-                {{ __('AKUN') }}
+                AKUN
             </div>
         </li>
 
         <li class="sidebar-menu-item">
             <a class="sidebar-menu-link {{ Request::is('profile*') ? 'active' : '' }}" href="{{ route('profile.index') }}">
                 <i class="bi bi-person-circle sidebar-menu-icon"></i>
-                <span class="sidebar-menu-text">{{ __('Profile') }}</span>
+                <span class="sidebar-menu-text">Profil</span>
             </a>
         </li>
 
@@ -441,7 +443,7 @@
         <li class="sidebar-menu-item">
             <a class="sidebar-menu-link {{ Request::is('notifications*') ? 'active' : '' }}" href="{{ route('notifications.index') }}">
                 <i class="bi bi-bell-fill sidebar-menu-icon"></i>
-                <span class="sidebar-menu-text">{{ __('Notifications') }}</span>
+                <span class="sidebar-menu-text">Notifikasi</span>
                 @if(Auth::user()->unreadNotifications->count() > 0)
                 <span class="badge rounded-pill" style="background: #ef4444; color: white; font-size: 0.7rem; margin-left: auto;">
                     {{ Auth::user()->unreadNotifications->count() }}
@@ -456,20 +458,20 @@
     <div class="sidebar-footer">
         @auth
         <div class="sidebar-user-card">
-            <a href="{{ route('profile.index') }}" class="sidebar-user-avatar" title="{{ __('view_edit_profile') }}">
+            <a href="{{ route('profile.index') }}" class="sidebar-user-avatar" title="Lihat & Edit Profil">
                 @if(Auth::user()->photo && Storage::disk('public')->exists(Auth::user()->photo))
-                    <img src="{{ asset('storage/' . Auth::user()->photo) }}" alt="User Photo">
+                    <img src="{{ asset('storage/' . Auth::user()->photo) }}" alt="Foto Pengguna">
                 @else
                     <i class="bi bi-person-fill"></i>
                 @endif
             </a>
             <div class="sidebar-user-info">
-                <div class="sidebar-user-name">{{ Auth::user()->name ?? __('cashier') }}</div>
+                <div class="sidebar-user-name">{{ Auth::user()->name ?? 'Kasir' }}</div>
                 <div class="sidebar-user-role">
-                    {{ Auth::user()->role->name ?? Auth::user()->role->NAME ?? (is_string(Auth::user()->role) ? Auth::user()->role : __('staff')) }}
+                    {{ Auth::user()->role->name ?? Auth::user()->role->NAME ?? (is_string(Auth::user()->role) ? Auth::user()->role : 'Staf') }}
                 </div>
             </div>
-            <a href="{{ route('logout') }}" class="sidebar-logout-btn" title="{{ __('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            <a href="{{ route('logout') }}" class="sidebar-logout-btn" title="Keluar" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                 <i class="bi bi-box-arrow-right"></i>
             </a>
         </div>
@@ -478,7 +480,7 @@
 </div>
 
 <!-- TOGGLE BUTTON -->
-<button class="sidebar-toggle" id="sidebarToggle" title="Toggle Sidebar">
+<button class="sidebar-toggle" id="sidebarToggle" title="Buka/Tutup Sidebar">
     <i class="bi bi-list"></i>
 </button>
 

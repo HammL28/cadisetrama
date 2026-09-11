@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
 
         // Account Kasir (role_id = 2)
         User::create([
-            'name'     => 'Kasir Toko',
+            'name'     => 'Ilham',
             'email'    => 'kasir@gmail.com',
             'password' => Hash::make('password123'),
             'role_id'  => 2,

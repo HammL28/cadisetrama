@@ -20,7 +20,8 @@ class ItemPenjualanFactory extends Factory
 
     public function definition(): array
     {
-        $produk = Produk::inRandomOrder()->first();
+        // Ambil produk acak, atau buat produk baru jika database kosong
+        $produk = Produk::inRandomOrder()->first() ?? Produk::factory()->create();
         $qty = $this->faker->numberBetween(1, 10);
         
         return [

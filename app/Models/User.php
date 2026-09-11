@@ -22,7 +22,7 @@ class User extends Authenticatable
         'role_id',
         'google_id',
         'google_avatar',
-        
+
         // Profil Toko
         'store_name',
         'store_phone',
@@ -37,6 +37,12 @@ class User extends Authenticatable
         'enable_cash',
         'enable_qris',
         'enable_transfer',
+
+        // Rekening Bank (untuk metode Transfer)
+        'bca_account_number',
+        'bca_account_holder',
+        'mandiri_account_number',
+        'mandiri_account_holder',
 
         // Pengaturan Notifikasi
         'email_notifications',
@@ -75,7 +81,7 @@ class User extends Authenticatable
         return [
             'email_verified_at'           => 'datetime',
             'password'                    => 'hashed',
-            
+
             // Decimal Casts
             'tax_rate'                    => 'float',
             'service_charge'              => 'float',

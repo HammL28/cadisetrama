@@ -10,6 +10,7 @@ use App\Notifications\SaleNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Exception;
 
 class PenjualanController extends Controller
 {
@@ -29,75 +30,46 @@ class PenjualanController extends Controller
                 'itemPenjualan.produk'
             ])
 
-            // 🔎 Search:
-            // - ID transaksi
-            // - Nama kasir
-            // - Nama produk
+            // 🔎 Search: ID transaksi, nama kasir, atau nama produk
             ->when($keyword, function ($q) use ($keyword) {
                 $q->where(function ($sub) use ($keyword) {
-
-                    // Cari berdasarkan ID transaksi
                     $sub->where('id', 'like', '%' . $keyword . '%')
-
-                        // Cari berdasarkan nama kasir
                         ->orWhereHas('user', function ($u) use ($keyword) {
-                            $u->where(
-                                'name',
-                                'like',
-                                '%' . $keyword . '%'
-                            );
+                            $u->where('name', 'like', '%' . $keyword . '%');
                         })
-
-                        // Cari berdasarkan nama produk
                         ->orWhereHas('itemPenjualan.produk', function ($p) use ($keyword) {
-                            $p->where(
-                                'nama',
-                                'like',
-                                '%' . $keyword . '%'
-                            );
+                            $p->where('nama', 'like', '%' . $keyword . '%');
                         });
                 });
             })
 
             // 🔍 Filter status transaksi
             ->when($status, function ($q) use ($status) {
-                $q->whereRaw(
-                    'LOWER(status) = ?',
-                    [strtolower($status)]
-                );
+                $q->whereRaw('LOWER(status) = ?', [strtolower($status)]);
             })
 
             // 🔍 Filter metode pembayaran
             ->when($metode, function ($q) use ($metode) {
-                $q->where(
-                    'metode_pembayaran',
-                    'like',
-                    '%' . $metode . '%'
-                );
+                $q->where('metode_pembayaran', 'like', '%' . $metode . '%');
             });
 
         // ==========================================
         // RINGKASAN DATA
         // ==========================================
 
-        // Total omset
+        // Total omset (Hanya dari transaksi COMPLETED)
         $totalOmset = (clone $query)
+            ->whereRaw('LOWER(status) = ?', ['completed'])
             ->sum('total_pembayaran');
 
         // Total transaksi non-tunai
         $totalNonTunai = (clone $query)
-            ->whereIn(
-                DB::raw('LOWER(metode_pembayaran)'),
-                ['qris', 'transfer']
-            )
+            ->whereIn(DB::raw('LOWER(metode_pembayaran)'), ['qris', 'transfer'])
             ->count();
 
         // Total transaksi tunai
         $totalTunai = (clone $query)
-            ->whereIn(
-                DB::raw('LOWER(metode_pembayaran)'),
-                ['tunai', 'cash']
-            )
+            ->whereIn(DB::raw('LOWER(metode_pembayaran)'), ['tunai', 'cash'])
             ->count();
 
         // ==========================================
@@ -109,15 +81,12 @@ class PenjualanController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view(
-            'penjualan.index',
-            compact(
-                'sales',
-                'totalOmset',
-                'totalNonTunai',
-                'totalTunai'
-            )
-        );
+        return view('penjualan.index', compact(
+            'sales',
+            'totalOmset',
+            'totalNonTunai',
+            'totalTunai'
+        ));
     }
 
     /**
@@ -130,20 +99,15 @@ class PenjualanController extends Controller
             'user'
         ]);
 
-        return view(
-            'penjualan.show',
-            compact('penjualan')
-        );
+        return view('penjualan.show', compact('penjualan'));
     }
 
     /**
-     * Menampilkan halaman kasir (POS)
-     * untuk membuat transaksi baru.
+     * Menampilkan halaman kasir (POS) untuk membuat transaksi baru.
      */
     public function create(SearchRequest $request)
     {
-        // Membuat atau mengambil transaksi OPEN
-        // milik user yang sedang login.
+        // Membuat atau mengambil transaksi OPEN milik user yang sedang login
         $sale = Penjualan::firstOrCreate(
             [
                 'user_id' => Auth::id(),
@@ -157,73 +121,51 @@ class PenjualanController extends Controller
 
         $keyword = $request->input('search');
 
-        // ==========================================
         // PENCARIAN PRODUK
-        // ==========================================
-        // Kolom yang digunakan adalah "nama".
-        // Tidak menggunakan "nama_produk".
         $products = Produk::when($keyword, function ($query) use ($keyword) {
-            $query->where(
-                'nama',
-                'like',
-                '%' . $keyword . '%'
-            );
+            $query->where('nama', 'like', '%' . $keyword . '%');
         })
         ->orderBy('nama')
         ->get();
 
+        // Data user (dipakai untuk nomor rekening bank di modal transfer)
+        $user = Auth::user();
+
         $mode = 'create';
 
-        return view(
-            'penjualan.pos',
-            compact(
-                'sale',
-                'products',
-                'mode'
-            )
-        );
+        return view('penjualan.pos', compact('sale', 'products', 'mode', 'user'));
     }
 
     /**
-     * Membuka halaman POS untuk
-     * mengedit transaksi OPEN.
+     * Membuka halaman POS untuk mengedit transaksi OPEN.
      */
     public function edit(Penjualan $penjualan)
     {
         $sale = $penjualan;
 
-        // Transaksi COMPLETED tidak boleh diedit.
+        // Transaksi COMPLETED tidak boleh diedit
         abort_if(
             strtoupper($sale->status) === 'COMPLETED',
             403,
             'Transaksi yang sudah selesai tidak dapat diubah.'
         );
 
-        // Load item dan produk
         $sale->load('itemPenjualan.produk');
-
-        // Ambil seluruh produk
         $products = Produk::orderBy('nama')->get();
+
+        // Data user (dipakai untuk nomor rekening bank di modal transfer)
+        $user = Auth::user();
 
         $mode = 'edit';
 
-        return view(
-            'penjualan.pos',
-            compact(
-                'sale',
-                'products',
-                'mode'
-            )
-        );
+        return view('penjualan.pos', compact('sale', 'products', 'mode', 'user'));
     }
 
     /**
      * Menyelesaikan / checkout transaksi.
      */
-    public function update(
-        Request $request,
-        Penjualan $penjualan
-    ) {
+    public function update(Request $request, Penjualan $penjualan)
+    {
         // Validasi metode pembayaran
         $request->validate([
             'payment_method' => 'required|in:CASH,QRIS,TRANSFER'
@@ -231,127 +173,90 @@ class PenjualanController extends Controller
 
         // Pastikan transaksi masih OPEN
         if (strtoupper($penjualan->status) !== 'OPEN') {
-            return back()->with(
-                'errors',
-                'Transaksi sudah diproses sebelumnya.'
-            );
+            return back()->with('error', 'Transaksi sudah diproses sebelumnya.');
         }
 
         // Pastikan keranjang tidak kosong
         if ($penjualan->itemPenjualan()->count() === 0) {
-            return back()->with(
-                'errors',
-                'Keranjang belanja masih kosong.'
-            );
+            return back()->with('error', 'Keranjang belanja masih kosong.');
         }
 
-        DB::transaction(function () use (
-            $penjualan,
-            $request
-        ) {
-            // Hitung total transaksi
-            $total = $penjualan
-                ->itemPenjualan()
-                ->sum('subtotal');
+        try {
+            DB::transaction(function () use ($penjualan, $request) {
+                $penjualan->load('itemPenjualan.produk');
 
-            // Update transaksi
-            $penjualan->update([
-                'metode_pembayaran' => $request->payment_method,
-                'total_pembayaran'  => $total,
-                'status'            => 'COMPLETED',
-            ]);
+                // 1. Cek ketersediaan stok & kurangi stok
+                foreach ($penjualan->itemPenjualan as $item) {
+                    // Lock record produk untuk mencegah race condition
+                    $produk = Produk::where('id', $item->produk_id)->lockForUpdate()->first();
 
-            // Load relasi produk dan user
-            $penjualan->load([
-                'itemPenjualan.produk',
-                'user'
-            ]);
+                    if (!$produk || $produk->stok < $item->kuantitas) {
+                        throw new Exception("Stok untuk produk '{$item->produk->nama}' tidak mencukupi.");
+                    }
 
-            // ==========================================
-            // NOTIFIKASI
-            // ==========================================
+                    // Kurangi stok produk
+                    $produk->decrement('stok', $item->kuantitas);
+                }
 
-            $currentUser = Auth::user();
+                // 2. Hitung total transaksi
+                $total = $penjualan->itemPenjualan()->sum('subtotal');
 
-            $userName = $currentUser->name ?? 'Kasir';
+                // 3. Update status transaksi
+                $penjualan->update([
+                    'metode_pembayaran' => $request->payment_method,
+                    'total_pembayaran'  => $total,
+                    'status'            => 'COMPLETED',
+                ]);
 
-            $userRole = ucfirst(
-                is_object($currentUser->role)
-                    ? ($currentUser->role->name ?? 'User')
-                    : ($currentUser->role ?? 'User')
-            );
+                // 4. Kirim Notifikasi Penjualan
+                $currentUser = Auth::user();
+                $userName = $currentUser->name ?? 'Kasir';
+                $userRole = ucfirst(
+                    is_object($currentUser->role)
+                        ? ($currentUser->role->name ?? 'User')
+                        : ($currentUser->role ?? 'User')
+                );
 
-            // Ambil user yang mengaktifkan notifikasi penjualan
-            $users = User::where(
-                'sales_notifications',
-                true
-            )->get();
+                $usersToNotify = User::where('sales_notifications', true)->get();
 
-            foreach ($users as $user) {
-                $user->notify(
-                    new SaleNotification(
+                foreach ($usersToNotify as $user) {
+                    $user->notify(new SaleNotification(
                         $penjualan,
                         $total,
                         $userName,
                         $userRole
-                    )
-                );
-            }
-        });
+                    ));
+                }
+            });
+        } catch (Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
 
         return redirect()
             ->route('penjualan.index')
-            ->with(
-                'success',
-                'Transaksi berhasil diselesaikan.'
-            );
+            ->with('success', 'Transaksi berhasil diselesaikan.');
     }
 
     /**
-     * Membatalkan transaksi OPEN
-     * dan mengembalikan stok produk.
+     * Membatalkan transaksi OPEN.
      */
     public function destroy(Penjualan $penjualan)
     {
-        // Transaksi yang sudah selesai
-        // tidak boleh dibatalkan.
+        // Transaksi COMPLETED tidak boleh dibatalkan lewat fungsi ini
         if (strtoupper($penjualan->status) !== 'OPEN') {
             return redirect()
                 ->route('penjualan.index')
-                ->with(
-                    'errors',
-                    'Transaksi yang sudah selesai tidak dapat dibatalkan.'
-                );
+                ->with('error', 'Transaksi yang sudah selesai tidak dapat dibatalkan.');
         }
 
         DB::transaction(function () use ($penjualan) {
-
-            // Load item penjualan
-            $penjualan->load('itemPenjualan.produk');
-
-            // Kembalikan stok
-            foreach ($penjualan->itemPenjualan as $item) {
-
-                if ($item->produk) {
-                    $item->produk->increment(
-                        'stok',
-                        $item->kuantitas
-                    );
-                }
-            }
-
-            // Hapus item transaksi
+            // Hapus relasi item transaksi dan data transaksi utama
             $penjualan->itemPenjualan()->delete();
-
-            // Hapus transaksi
             $penjualan->delete();
         });
 
         return redirect()
             ->route('penjualan.index')
-            ->with(
-                'success',
-                'Transaksi berhasil dibatalkan.'
-            );
+            ->with('success', 'Transaksi berhasil dibatalkan.');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Penjualan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -9,16 +10,20 @@ use Illuminate\Support\Facades\Log;
 class SettingsController extends Controller
 {
     /**
-     * Display the settings page.
+     * Menampilkan halaman pengaturan beserta data penjualan.
      */
     public function index()
     {
         $user = Auth::user();
-        return view('settings.index', compact('user'));
+
+        // Mengambil data penjualan agar tidak terjadi error Undefined variable $penjualan
+        $penjualan = Penjualan::where('user_id', $user->id)->latest()->get();
+
+        return view('settings.index', compact('user', 'penjualan'));
     }
 
     /**
-     * Update the user settings.
+     * Memperbarui pengaturan user.
      */
     public function update(Request $request)
     {
@@ -34,6 +39,12 @@ class SettingsController extends Controller
             'receipt_address'      => 'nullable|string',
             'tax_rate'             => 'nullable|numeric|min:0|max:100',
             'service_charge'       => 'nullable|numeric|min:0|max:100',
+
+            // Rekening Bank
+            'bca_account_number'     => 'nullable|string|max:50',
+            'bca_account_holder'     => 'nullable|string|max:255',
+            'mandiri_account_number' => 'nullable|string|max:50',
+            'mandiri_account_holder' => 'nullable|string|max:255',
         ]);
 
         // Tangkap input (prioritaskan input form baru, lalu form lama, lalu data eksisting)
@@ -61,6 +72,12 @@ class SettingsController extends Controller
             'enable_qris'                  => $request->has('enable_qris'),
             'enable_transfer'              => $request->has('enable_transfer'),
 
+            // Rekening Bank
+            'bca_account_number'     => $request->bca_account_number ?? $user->bca_account_number,
+            'bca_account_holder'     => $request->bca_account_holder ?? $user->bca_account_holder,
+            'mandiri_account_number' => $request->mandiri_account_number ?? $user->mandiri_account_number,
+            'mandiri_account_holder' => $request->mandiri_account_holder ?? $user->mandiri_account_holder,
+
             // Notifikasi
             'email_notifications'          => $request->has('email_notifications'),
             'sales_notifications'          => $request->has('sales_notifications'),
@@ -85,55 +102,55 @@ class SettingsController extends Controller
     }
 
     /**
-     * Display user notifications.
+     * Menampilkan notifikasi user.
      */
     public function notifications()
     {
         $user = Auth::user();
-        
+
         // Ambil semua notifikasi milik user (termasuk yang sudah dibaca)
         $notifications = $user->notifications()->latest()->paginate(10);
-        
+
         // Debug info
         Log::info('User ID: ' . $user->id);
         Log::info('Notifications count: ' . $notifications->count());
         Log::info('Unread count: ' . $user->unreadNotifications->count());
-        
+
         return view('settings.notifications', compact('user', 'notifications'));
     }
 
     /**
-     * Mark notification as read.
+     * Tandai notifikasi sebagai sudah dibaca.
      */
     public function markAsRead($notificationId)
     {
         $user = Auth::user();
         $notification = $user->notifications()->findOrFail($notificationId);
         $notification->markAsRead();
-        
+
         return back()->with('success', 'Notifikasi ditandai sebagai sudah dibaca.');
     }
 
     /**
-     * Mark all notifications as read.
+     * Tandai semua notifikasi sebagai sudah dibaca.
      */
     public function markAllAsRead()
     {
         $user = Auth::user();
         $user->unreadNotifications->markAsRead();
-        
+
         return back()->with('success', 'Semua notifikasi ditandai sebagai sudah dibaca.');
     }
 
     /**
-     * Get unread notification count for polling.
+     * Ambil jumlah notifikasi belum dibaca untuk polling JS.
      */
     public function unreadCount()
     {
         $user = Auth::user();
         $count = $user->unreadNotifications->count();
         $latestNotification = $user->unreadNotifications()->latest()->first();
-        
+
         return response()->json([
             'count' => $count,
             'notification' => $latestNotification

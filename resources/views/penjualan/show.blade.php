@@ -4,6 +4,44 @@
 
 @section('content')
 
+@php
+    // === AMBIL DATA TOKO DARI AKUN ADMIN/PEMILIK TOKO (BUKAN DARI KASIR) ===
+    $storeOwner = null;
+    try {
+        $storeOwner = \App\Models\User::whereHas('role', function ($q) {
+            $q->whereRaw('UPPER(name) = ?', ['ADMIN']);
+        })->first();
+    } catch (\Throwable $e) {
+        $storeOwner = null;
+    }
+
+    $userPenjualan = $storeOwner ?? $penjualan->user ?? Auth::user();
+
+    $storeName = $userPenjualan->store_name ?? 'ILHAM JAYA HEBAT';
+    $storeAddress = $userPenjualan->store_address ?? 'JL.JL.JL.J';
+    $storePhone = $userPenjualan->store_phone ?? '087786888522';
+
+    // === DATA PETUGAS YANG BENAR-BENAR MELAKUKAN TRANSAKSI ===
+    $cashierUser = $penjualan->user ?? Auth::user();
+    $cashierName = $cashierUser->name ?? 'Kasir';
+
+    $roleRaw = $cashierUser->role ?? null;
+    if (is_object($roleRaw)) {
+        $roleNameRaw = $roleRaw->name ?? 'Kasir';
+    } elseif (is_array($roleRaw)) {
+        $roleNameRaw = $roleRaw['name'] ?? 'Kasir';
+    } elseif (!empty($roleRaw)) {
+        $roleNameRaw = (string) $roleRaw;
+    } else {
+        $roleNameRaw = 'Kasir';
+    }
+
+    $roleLabel = ucfirst(strtolower($roleNameRaw));
+
+    // Ukuran kertas thermal dari Pengaturan Toko (58mm / 80mm)
+    $paperSize = $userPenjualan->paper_size ?? '58mm';
+@endphp
+
 <style>
     :root {
         --purple-deep: #6366f1;
@@ -45,53 +83,48 @@
         display: inline-block;
     }
 
-    /* Sembunyikan elemen cetak di mode layar biasa */
+    /* Sembunyikan area cetak pada mode tampilan web biasa */
     #receipt-print-area {
         display: none;
     }
 
-    /* PERBAIKAN CSS PRINT (SOLUSI LAYAR KOSONG & TOMBOL BURGER) */
+    /* PERBAIKAN CSS PRINT THERMAL */
     @media print {
         @page {
-            size: portrait;
-            margin: 0mm;
+            size: {{ $paperSize }} auto;
+            margin: 0;
         }
 
-        /* Paksa browser mencetak background & warna */
+        html, body {
+            width: {{ $paperSize }} !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
+            background: #ffffff !important;
+        }
+
         * {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
         }
 
-        /* Sembunyikan tampilan web internal & navbar/sidebar/tombol burger */
         .container-web-view,
-        nav,
-        header,
-        footer,
-        aside,
-        .sidebar,
-        .navbar,
-        .navbar-toggler,
-        .btn-toggle,
-        #sidebarToggle,
-        button {
+        nav, header, footer, aside,
+        .sidebar, .navbar, .navbar-toggler,
+        .btn-toggle, #sidebarToggle, button {
             display: none !important;
         }
 
-        /* Paksa area struk tampil menutupi seluruh halaman print */
         #receipt-print-area {
             display: block !important;
-            position: fixed !important;
-            left: 0 !important;
-            top: 0 !important;
+            position: static !important;
             width: 100% !important;
-            max-width: 80mm !important; /* Sesuaikan 58mm atau 80mm sesuai lebar printer thermal */
-            padding: 5mm !important;
+            max-width: {{ $paperSize }} !important;
             margin: 0 auto !important;
+            padding: 2mm 3mm !important;
             background: #ffffff !important;
             font-family: 'Courier New', Courier, monospace !important;
-            font-size: 11px !important;
-            z-index: 999999 !important;
+            font-size: 12px !important;
+            line-height: 1.3 !important;
             box-sizing: border-box !important;
         }
 
@@ -110,25 +143,6 @@
         }
     }
 </style>
-
-@php
-    $userPenjualan = $penjualan->user ?? Auth::user();
-    
-    $storeName = $userPenjualan->store_name ?? 'ILHAM JAYA HEBAT';
-    $storeAddress = $userPenjualan->store_address ?? 'JL.JL.JL.J';
-    $storePhone = $userPenjualan->store_phone ?? '087786888522';
-
-    // Ambil nama kasir
-    $cashierName = $userPenjualan->name ?? 'Kasir';
-
-    // Ambil Role Kasir tanpa merender Object/JSON
-    $roleRaw = $userPenjualan->role ?? 'STAFF';
-    if (is_object($roleRaw) || is_array($roleRaw)) {
-        $cashierRole = strtoupper($roleRaw->name ?? $roleRaw['name'] ?? 'STAFF');
-    } else {
-        $cashierRole = strtoupper((string) $roleRaw);
-    }
-@endphp
 
 {{-- TAMPILAN MONITOR / WEB --}}
 <div class="container py-4 container-web-view" style="padding-top: 5rem;">
@@ -173,8 +187,8 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="text-muted small d-block">Kasir / Petugas</label>
-                            <span class="fw-semibold text-dark">{{ $cashierName }} ({{ $cashierRole }})</span>
+                            <label class="text-muted small d-block">{{ $roleLabel }} / Petugas</label>
+                            <span class="fw-semibold text-dark">{{ $cashierName }}</span>
                         </div>
 
                         <div class="mb-3">
@@ -271,73 +285,73 @@
 
 </div>
 
-{{-- AREA STRUK BERWARNA & TERISOLASI UNTUK PRINT --}}
+{{-- AREA STRUK UNTUK PRINT --}}
 <div id="receipt-print-area">
-    <div style="text-align: center; border-bottom: 2px dashed #8b5cf6; padding-bottom: 8px; margin-bottom: 8px;">
-        <h3 style="margin: 0; font-size: 13px; font-weight: bold; text-transform: uppercase; color: #8b5cf6;">
+    <div style="text-align: center; border-bottom: 2px dashed #8b5cf6; padding-bottom: 6px; margin-bottom: 6px;">
+        <h3 style="margin: 0; font-size: 16px; font-weight: bold; text-transform: uppercase; color: #8b5cf6;">
             {{ $storeName }}
         </h3>
-        <p style="margin: 3px 0 0 0; font-size: 9px; color: #4b5563;">
+        <p style="margin: 2px 0 0 0; font-size: 11px; color: #4b5563;">
             {{ $storeAddress }}
         </p>
-        <p style="margin: 1px 0 0 0; font-size: 9px; color: #4b5563;">
+        <p style="margin: 1px 0 0 0; font-size: 11px; color: #4b5563;">
             Telp / WA: {{ $storePhone }}
         </p>
     </div>
 
-    <table style="width: 100%; font-size: 9px; border-collapse: collapse; margin-bottom: 6px; color: #1f2937;">
+    <table style="width: 100%; font-size: 12px; border-collapse: collapse; margin-bottom: 6px; color: #1f2937;">
         <tr>
-            <td style="padding: 2px 0;">No. Trx:</td>
-            <td style="text-align: right; padding: 2px 0; font-weight: bold; color: #8b5cf6;">#{{ $penjualan->id }}</td>
+            <td style="padding: 1px 0;">No. Trx:</td>
+            <td style="text-align: right; padding: 1px 0; font-weight: bold; color: #8b5cf6;">#{{ $penjualan->id }}</td>
         </tr>
         <tr>
-            <td style="padding: 2px 0;">Tanggal:</td>
-            <td style="text-align: right; padding: 2px 0;">{{ $penjualan->created_at->format('d/m/Y H:i') }}</td>
+            <td style="padding: 1px 0;">Tanggal:</td>
+            <td style="text-align: right; padding: 1px 0;">{{ $penjualan->created_at->format('d/m/Y H:i') }}</td>
         </tr>
         <tr>
-            <td style="padding: 2px 0;">Kasir:</td>
-            <td style="text-align: right; padding: 2px 0; font-weight: bold;">{{ $cashierName }} ({{ $cashierRole }})</td>
+            <td style="padding: 1px 0;">{{ $roleLabel }}:</td>
+            <td style="text-align: right; padding: 1px 0; font-weight: bold;">{{ $cashierName }}</td>
         </tr>
         <tr>
-            <td style="padding: 2px 0;">Metode Bayar:</td>
-            <td style="text-align: right; padding: 2px 0; font-weight: bold; color: #8b5cf6;">
+            <td style="padding: 1px 0;">Metode Bayar:</td>
+            <td style="text-align: right; padding: 1px 0; font-weight: bold; color: #8b5cf6;">
                 {{ strtoupper($penjualan->metode_pembayaran) }}
             </td>
         </tr>
     </table>
 
-    <div style="border-top: 1px dashed #8b5cf6; margin: 6px 0;"></div>
+    <div style="border-top: 1px dashed #8b5cf6; margin: 4px 0;"></div>
 
-    <table style="width: 100%; font-size: 9px; border-collapse: collapse; color: #1f2937;">
+    <table style="width: 100%; font-size: 12px; border-collapse: collapse; color: #1f2937;">
         @foreach($penjualan->itemPenjualan as $item)
             <tr>
-                <td colspan="2" style="font-weight: bold; padding-top: 3px;">
+                <td colspan="2" style="font-weight: bold; padding-top: 2px;">
                     {{ $item->produk->nama ?? $item->produk->nama_produk ?? 'Produk' }}
                 </td>
             </tr>
             <tr>
-                <td style="padding-bottom: 4px; color: #4b5563;">
+                <td style="padding-bottom: 3px; color: #4b5563;">
                     {{ $item->kuantitas }} x Rp {{ number_format($item->harga_satuan ?? ($item->subtotal / max($item->kuantitas, 1)), 0, ',', '.') }}
                 </td>
-                <td style="text-align: right; padding-bottom: 4px; font-weight: bold;">
+                <td style="text-align: right; padding-bottom: 3px; font-weight: bold;">
                     Rp {{ number_format($item->subtotal, 0, ',', '.') }}
                 </td>
             </tr>
         @endforeach
     </table>
 
-    <div style="border-top: 1px dashed #8b5cf6; margin: 6px 0;"></div>
+    <div style="border-top: 1px dashed #8b5cf6; margin: 4px 0;"></div>
 
-    <table style="width: 100%; font-size: 10px; font-weight: bold; color: #8b5cf6;">
+    <table style="width: 100%; font-size: 14px; font-weight: bold; color: #8b5cf6;">
         <tr>
             <td>TOTAL BAYAR</td>
             <td style="text-align: right;">Rp {{ number_format($penjualan->total_pembayaran, 0, ',', '.') }}</td>
         </tr>
     </table>
 
-    <div style="border-top: 2px dashed #8b5cf6; margin: 8px 0;"></div>
+    <div style="border-top: 2px dashed #8b5cf6; margin: 6px 0;"></div>
 
-    <div style="text-align: center; margin-top: 10px; font-size: 9px; color: #4b5563;">
+    <div style="text-align: center; margin-top: 8px; font-size: 11px; color: #4b5563;">
         <p style="margin: 0; font-weight: bold; color: #8b5cf6;">-- TERIMA KASIH --</p>
         <p style="margin: 2px 0;">Barang yang sudah dibeli</p>
         <p style="margin: 0;">tidak dapat ditukar / dikembalikan</p>

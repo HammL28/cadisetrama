@@ -192,7 +192,7 @@
                 <h1 class="fw-bold text-white mb-2 fs-2">
                     Tampilan & Cetak Nota
                 </h1>
-                <p class="text-white-50 mb-0 fs-6">Sesuaikan header, footer, ukuran kertas, dan informasi toko pada struk belanja.</p>
+                <p class="text-white-50 mb-0 fs-6">Sesuaikan header, footer, rekening bank, ukuran kertas, dan informasi toko pada struk belanja.</p>
             </div>
             <div class="col-lg-5 text-lg-end">
                 <a href="{{ route('dashboard') }}" class="btn btn-outline-light rounded-pill px-4 shadow-sm fw-semibold d-inline-flex align-items-center gap-2">
@@ -263,7 +263,60 @@
                 </div>
             </div>
 
-            {{-- 2. FOOTER & PESAN PENUTUP --}}
+            {{-- 2. REKENING BANK SEBAGAI METODE PEMBAYARAN --}}
+            <div class="col-lg-6">
+                <div class="card dashboard-card h-100">
+                    <div class="card-top-accent"></div>
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="icon-box-modern me-3">
+                                <i class="bi bi-bank"></i>
+                            </div>
+                            <div>
+                                <h4 class="fw-bold mb-0" style="color: var(--text-heading);">Pengaturan Rekening Bank</h4>
+                                <span class="text-muted small" style="color: var(--text-muted);">Nomor rekening transfer untuk pembayaran Kasir</span>
+                            </div>
+                        </div>
+
+                        {{-- Rekening BCA --}}
+                        <div class="p-3 mb-3 border rounded-3 bg-light">
+                            <div class="fw-bold mb-2 text-primary d-flex align-items-center gap-1">
+                                <i class="bi bi-credit-card"></i> Bank BCA
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-md-7">
+                                    <label class="form-label small mb-1">Nomor Rekening BCA</label>
+                                    <input type="text" name="bca_account_number" class="form-control form-control-sm" placeholder="Contoh: 1234567890" value="{{ old('bca_account_number', $user->bca_account_number ?? '1234567890') }}">
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label small mb-1">Atas Nama (A.N)</label>
+                                    <input type="text" name="bca_account_holder" class="form-control form-control-sm" placeholder="A.N Pemilik" value="{{ old('bca_account_holder', $user->bca_account_holder ?? 'PT TOKO KASIR POS') }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Rekening Mandiri --}}
+                        <div class="p-3 border rounded-3 bg-light">
+                            <div class="fw-bold mb-2 text-warning d-flex align-items-center gap-1">
+                                <i class="bi bi-credit-card"></i> Bank Mandiri
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-md-7">
+                                    <label class="form-label small mb-1">Nomor Rekening Mandiri</label>
+                                    <input type="text" name="mandiri_account_number" class="form-control form-control-sm" placeholder="Contoh: 1370001234567" value="{{ old('mandiri_account_number', $user->mandiri_account_number ?? '1370001234567') }}">
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label small mb-1">Atas Nama (A.N)</label>
+                                    <input type="text" name="mandiri_account_holder" class="form-control form-control-sm" placeholder="A.N Pemilik" value="{{ old('mandiri_account_holder', $user->mandiri_account_holder ?? 'PT TOKO KASIR POS') }}">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            {{-- 3. FOOTER & PESAN PENUTUP --}}
             <div class="col-lg-6">
                 <div class="card dashboard-card h-100">
                     <div class="card-top-accent"></div>
@@ -303,7 +356,7 @@
                 </div>
             </div>
 
-            {{-- 3. FORMAT PRINTER & UKURAN KERTAS --}}
+            {{-- 4. FORMAT PRINTER & UKURAN KERTAS --}}
             <div class="col-lg-6">
                 <div class="card dashboard-card h-100">
                     <div class="card-top-accent"></div>
@@ -353,60 +406,6 @@
                 </div>
             </div>
 
-            {{-- 4. LOGO & TAMPILAN ELEMEN --}}
-            <div class="col-lg-6">
-                <div class="card dashboard-card h-100">
-                    <div class="card-top-accent"></div>
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-center mb-4">
-                            <div class="icon-box-modern me-3">
-                                <i class="bi bi-image"></i>
-                            </div>
-                            <div>
-                                <h4 class="fw-bold mb-0" style="color: var(--text-heading);">Logo & Opsi Tambahan</h4>
-                                <span class="text-muted small" style="color: var(--text-muted);">Visibilitas elemen cetak</span>
-                            </div>
-                        </div>
-
-                        <div class="d-flex align-items-center justify-content-between py-3 px-3 rounded-3 mb-3" style="background: var(--icon-bg); border: 1px solid var(--card-border);">
-                            <div class="flex-grow-1 me-2">
-                                <div class="fw-semibold mb-1" style="color: var(--text-heading);">Tampilkan Nama Kasir</div>
-                                <div class="small" style="color: var(--text-muted);">Cetak nama petugas kasir yang melayani</div>
-                            </div>
-                            <div class="flex-shrink-0">
-                                <div class="toggle-switch {{ ($user->show_cashier_name ?? true) ? 'active' : '' }}" onclick="toggleSwitch(this)">
-                                    <input type="checkbox" name="show_cashier_name" value="1" {{ ($user->show_cashier_name ?? true) ? 'checked' : '' }} hidden>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="d-flex align-items-center justify-content-between py-3 px-3 rounded-3 mb-3" style="background: var(--icon-bg); border: 1px solid var(--card-border);">
-                            <div class="flex-grow-1 me-2">
-                                <div class="fw-semibold mb-1" style="color: var(--text-heading);">Tampilkan Nama Pelanggan</div>
-                                <div class="small" style="color: var(--text-muted);">Sertakan nama member/customer jika ada</div>
-                            </div>
-                            <div class="flex-shrink-0">
-                                <div class="toggle-switch {{ ($user->show_customer_name ?? true) ? 'active' : '' }}" onclick="toggleSwitch(this)">
-                                    <input type="checkbox" name="show_customer_name" value="1" {{ ($user->show_customer_name ?? true) ? 'checked' : '' }} hidden>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="d-flex align-items-center justify-content-between py-3 px-3 rounded-3" style="background: var(--icon-bg); border: 1px solid var(--card-border);">
-                            <div class="flex-grow-1 me-2">
-                                <div class="fw-semibold mb-1" style="color: var(--text-heading);">Tampilkan Rincian Pajak/Diskon</div>
-                                <div class="small" style="color: var(--text-muted);">Pisahkan potongan diskon & pajak secara transparan</div>
-                            </div>
-                            <div class="flex-shrink-0">
-                                <div class="toggle-switch {{ ($user->show_tax_discount_breakdown ?? true) ? 'active' : '' }}" onclick="toggleSwitch(this)">
-                                    <input type="checkbox" name="show_tax_discount_breakdown" value="1" {{ ($user->show_tax_discount_breakdown ?? true) ? 'checked' : '' }} hidden>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             {{-- TOMBOL SIMPAN --}}
             <div class="col-12">
                 <div class="card dashboard-card p-4">
@@ -419,7 +418,7 @@
                     </div>
 
                     <button type="submit" class="btn btn-back w-100 py-3">
-                        <i class="bi bi-check-circle-fill me-2"></i>Simpan Pengaturan Struk
+                        <i class="bi bi-check-circle-fill me-2"></i>Simpan Pengaturan Struk & Rekening
                     </button>
                 </div>
             </div>
