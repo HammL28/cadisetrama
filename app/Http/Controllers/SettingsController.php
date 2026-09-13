@@ -6,6 +6,7 @@ use App\Models\Penjualan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class SettingsController extends Controller
 {
@@ -45,6 +46,14 @@ class SettingsController extends Controller
             'bca_account_holder'     => 'nullable|string|max:255',
             'mandiri_account_number' => 'nullable|string|max:50',
             'mandiri_account_holder' => 'nullable|string|max:255',
+
+            // Kustomisasi Sidebar
+            'sidebar_brand_text' => 'nullable|string|max:50',
+            'sidebar_color_from' => 'nullable|string|max:20',
+            'sidebar_color_to'   => 'nullable|string|max:20',
+            'sidebar_bg_photo'   => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048', // max 2MB
+            'sidebar_bg_opacity' => 'nullable|integer|min:0|max:80',
+            'sidebar_logo_shape' => 'nullable|in:circle,square',
         ]);
 
         // Tangkap input (prioritaskan input form baru, lalu form lama, lalu data eksisting)
@@ -54,6 +63,17 @@ class SettingsController extends Controller
 
         // Debug log sebelum update
         Log::info('Updating settings for User ID: ' . $user->id);
+
+        // Tangani upload foto latar sidebar (opsional, hanya jika user upload file baru)
+        $sidebarBgPhoto = $user->sidebar_bg_photo; // default: pertahankan foto lama
+        if ($request->hasFile('sidebar_bg_photo')) {
+            // Hapus foto lama supaya storage tidak menumpuk
+            if ($user->sidebar_bg_photo && Storage::disk('public')->exists($user->sidebar_bg_photo)) {
+                Storage::disk('public')->delete($user->sidebar_bg_photo);
+            }
+
+            $sidebarBgPhoto = $request->file('sidebar_bg_photo')->store('sidebar', 'public');
+        }
 
         // Update data profil toko, pajak, metode pembayaran, dan opsi struk
         $user->update([
@@ -93,6 +113,14 @@ class SettingsController extends Controller
             'show_cashier_name'            => $request->has('show_cashier_name'),
             'show_customer_name'           => $request->has('show_customer_name'),
             'show_tax_discount_breakdown'  => $request->has('show_tax_discount_breakdown'),
+
+            // Kustomisasi Sidebar
+            'sidebar_brand_text' => $request->sidebar_brand_text ?? $user->sidebar_brand_text ?? 'POS ILHAM',
+            'sidebar_color_from' => $request->sidebar_color_from ?? $user->sidebar_color_from ?? '#4f46e5',
+            'sidebar_color_to'   => $request->sidebar_color_to ?? $user->sidebar_color_to ?? '#e879f9',
+            'sidebar_bg_photo'   => $sidebarBgPhoto,
+            'sidebar_bg_opacity' => $request->sidebar_bg_opacity ?? $user->sidebar_bg_opacity ?? 25,
+            'sidebar_logo_shape' => $request->sidebar_logo_shape ?? $user->sidebar_logo_shape ?? 'circle',
         ]);
 
         // Debug log setelah update

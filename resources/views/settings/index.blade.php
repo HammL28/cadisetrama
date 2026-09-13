@@ -175,6 +175,33 @@
         border-color: var(--icon-color) !important;
         box-shadow: 0 0 0 0.2rem rgba(124, 58, 237, 0.25);
     }
+
+    /* KUSTOMISASI SIDEBAR - preview swatch warna */
+    .sidebar-color-preview {
+        height: 48px;
+        border-radius: 10px;
+        border: 1px solid var(--card-border);
+        margin-top: 0.75rem;
+    }
+
+    .form-control-color {
+        height: 46px;
+        padding: 0.3rem;
+        cursor: pointer;
+    }
+
+    .form-range::-webkit-slider-thumb {
+        background: #7c3aed;
+    }
+
+    .current-photo-preview {
+        width: 100%;
+        height: 90px;
+        border-radius: 10px;
+        object-fit: cover;
+        border: 1px solid var(--card-border);
+        margin-bottom: 0.5rem;
+    }
 </style>
 
 <div class="container py-4" style="padding-top: 5rem;">
@@ -229,6 +256,77 @@
         @method('PUT')
 
         <div class="row g-4 mb-4">
+
+            {{-- 0. KUSTOMISASI SIDEBAR --}}
+            <div class="col-lg-6">
+                <div class="card dashboard-card h-100">
+                    <div class="card-top-accent"></div>
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="icon-box-modern me-3">
+                                <i class="bi bi-palette-fill"></i>
+                            </div>
+                            <div>
+                                <h4 class="fw-bold mb-0" style="color: var(--text-heading);">Tampilan Sidebar</h4>
+                                <span class="text-muted small" style="color: var(--text-muted);">Warna, teks judul, dan foto latar sidebar</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="sidebar_brand_text" class="form-label">Teks Judul Sidebar</label>
+                            <input type="text" name="sidebar_brand_text" id="sidebar_brand_text" class="form-control"
+                                   placeholder="POS ILHAM"
+                                   value="{{ old('sidebar_brand_text', $user->sidebar_brand_text ?? 'POS ILHAM') }}">
+                        </div>
+
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <label for="sidebar_color_from" class="form-label">Warna Awal Gradasi</label>
+                                <input type="color" name="sidebar_color_from" id="sidebar_color_from"
+                                       class="form-control form-control-color w-100"
+                                       value="{{ old('sidebar_color_from', $user->sidebar_color_from ?? '#4f46e5') }}">
+                            </div>
+                            <div class="col-6">
+                                <label for="sidebar_color_to" class="form-label">Warna Akhir Gradasi</label>
+                                <input type="color" name="sidebar_color_to" id="sidebar_color_to"
+                                       class="form-control form-control-color w-100"
+                                       value="{{ old('sidebar_color_to', $user->sidebar_color_to ?? '#e879f9') }}">
+                            </div>
+                        </div>
+
+                        {{-- Preview gradasi warna secara langsung (client-side, tidak perlu simpan dulu) --}}
+                        <div class="sidebar-color-preview" id="sidebarColorPreview"></div>
+
+                        <hr class="my-3" style="border-color: var(--card-border);">
+
+                        <div class="mb-2">
+                            <label for="sidebar_bg_photo" class="form-label">Logo Toko (Samping Teks Judul)</label>
+
+                            @if(!empty($user->sidebar_bg_photo) && Storage::disk('public')->exists($user->sidebar_bg_photo))
+                                <div class="p-3 rounded-3 mb-2 d-flex align-items-center gap-3" style="background: var(--icon-bg); border: 1px solid var(--card-border);">
+                                    <img src="{{ asset('storage/' . $user->sidebar_bg_photo) }}"
+                                         alt="Logo sidebar saat ini"
+                                         style="height: 56px; width: 56px; object-fit: cover; border-radius: {{ ($user->sidebar_logo_shape ?? 'circle') === 'circle' ? '50%' : '12px' }}; border: 1px solid var(--card-border); flex-shrink: 0;">
+                                    <span class="small" style="color: var(--text-muted);">Logo saat ini</span>
+                                </div>
+                            @endif
+
+                            <input type="file" name="sidebar_bg_photo" id="sidebar_bg_photo" class="form-control" accept="image/*">
+                            <div class="form-text" style="color: var(--text-muted);">
+                                Format JPG/PNG, maksimal 2MB. Logo akan tampil sebagai kotak/lingkaran kecil di samping teks judul sidebar. Upload file baru untuk mengganti logo yang sudah ada.
+                            </div>
+                        </div>
+
+                        <div class="mb-1">
+                            <label for="sidebar_logo_shape" class="form-label">Bentuk Logo</label>
+                            <select name="sidebar_logo_shape" id="sidebar_logo_shape" class="form-select">
+                                <option value="circle" {{ (old('sidebar_logo_shape', $user->sidebar_logo_shape ?? 'circle') == 'circle') ? 'selected' : '' }}>Bulat</option>
+                                <option value="square" {{ (old('sidebar_logo_shape', $user->sidebar_logo_shape ?? 'circle') == 'square') ? 'selected' : '' }}>Kotak</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             {{-- 1. HEADER STRUK & IDENTITAS TOKO --}}
             <div class="col-lg-6">
@@ -436,6 +534,18 @@
             checkbox.checked = element.classList.contains('active');
         }
     }
+
+    // Live preview gradasi warna sidebar
+    function updateSidebarColorPreview() {
+        const from = document.getElementById('sidebar_color_from').value;
+        const to = document.getElementById('sidebar_color_to').value;
+        const preview = document.getElementById('sidebarColorPreview');
+        preview.style.background = `linear-gradient(135deg, ${from} 0%, ${to} 100%)`;
+    }
+
+    document.getElementById('sidebar_color_from').addEventListener('input', updateSidebarColorPreview);
+    document.getElementById('sidebar_color_to').addEventListener('input', updateSidebarColorPreview);
+    document.addEventListener('DOMContentLoaded', updateSidebarColorPreview);
 </script>
 
 @endsection

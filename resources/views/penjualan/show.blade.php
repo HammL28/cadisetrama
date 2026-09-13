@@ -89,17 +89,18 @@
     }
 
     /* PERBAIKAN CSS PRINT THERMAL */
+    /* Ukuran @page diatur secara dinamis lewat JavaScript (lihat script di bawah),
+       karena "auto" untuk tinggi kertas tidak konsisten di semua browser/driver. */
     @media print {
-        @page {
-            size: {{ $paperSize }} auto;
-            margin: 0;
-        }
-
         html, body {
             width: {{ $paperSize }} !important;
+            min-width: {{ $paperSize }} !important;
+            max-width: {{ $paperSize }} !important;
             margin: 0 auto !important;
             padding: 0 !important;
             background: #ffffff !important;
+            display: flex !important;
+            justify-content: center !important;
         }
 
         * {
@@ -116,7 +117,7 @@
 
         #receipt-print-area {
             display: block !important;
-            position: static !important;
+            position: relative !important;
             width: 100% !important;
             max-width: {{ $paperSize }} !important;
             margin: 0 auto !important;
@@ -357,5 +358,47 @@
         <p style="margin: 0;">tidak dapat ditukar / dikembalikan</p>
     </div>
 </div>
+
+<script>
+    (function () {
+        var paperWidth = "{{ $paperSize }}"; // contoh: "58mm" atau "80mm"
+        var dynamicStyleId = "dynamic-print-page-size";
+
+        function setDynamicPageSize() {
+            var area = document.getElementById('receipt-print-area');
+            if (!area) return;
+
+            // Tampilkan sementara di posisi tak terlihat supaya scrollHeight
+            // terukur dengan benar (elemen aslinya display:none di layar biasa).
+            var prevDisplay = area.style.display;
+            var prevPosition = area.style.position;
+            var prevVisibility = area.style.visibility;
+
+            area.style.display = 'block';
+            area.style.position = 'absolute';
+            area.style.visibility = 'hidden';
+            area.style.width = paperWidth;
+
+            var heightPx = area.scrollHeight;
+            // px -> mm (96 dpi), plus sedikit padding pengaman
+            var heightMm = Math.ceil((heightPx / 96) * 25.4) + 8;
+
+            area.style.display = prevDisplay;
+            area.style.position = prevPosition;
+            area.style.visibility = prevVisibility;
+
+            var styleTag = document.getElementById(dynamicStyleId);
+            if (!styleTag) {
+                styleTag = document.createElement('style');
+                styleTag.id = dynamicStyleId;
+                document.head.appendChild(styleTag);
+            }
+            styleTag.innerHTML =
+                '@media print { @page { size: ' + paperWidth + ' ' + heightMm + 'mm; margin: 0; } }';
+        }
+
+        window.addEventListener('beforeprint', setDynamicPageSize);
+    })();
+</script>
 
 @endsection

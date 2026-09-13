@@ -59,6 +59,14 @@ class User extends Authenticatable
         'show_cashier_name',
         'show_customer_name',
         'show_tax_discount_breakdown',
+
+        // Kustomisasi Sidebar
+        'sidebar_brand_text',
+        'sidebar_color_from',
+        'sidebar_color_to',
+        'sidebar_bg_photo',
+        'sidebar_bg_opacity',
+        'sidebar_logo_shape',
     ];
 
     /**
@@ -100,6 +108,9 @@ class User extends Authenticatable
             'show_cashier_name'           => 'boolean',
             'show_customer_name'          => 'boolean',
             'show_tax_discount_breakdown' => 'boolean',
+
+            // Kustomisasi Sidebar
+            'sidebar_bg_opacity'          => 'integer',
         ];
     }
 

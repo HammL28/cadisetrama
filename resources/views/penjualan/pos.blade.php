@@ -250,6 +250,11 @@
         transition: all 0.2s ease;
         cursor: pointer;
         position: relative;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        text-align: left;
+        padding: 0.6rem 0.75rem;
     }
 
     .bank-card-selectable:hover {
@@ -261,6 +266,326 @@
         border-color: var(--primary-purple);
         background-color: #f3e8ff;
     }
+
+    .bank-logo-badge {
+        width: 34px;
+        height: 34px;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        font-weight: 800;
+        font-size: 0.7rem;
+        flex-shrink: 0;
+    }
+
+    .bank-logo-badge.bca { background: #1e40af; }
+    .bank-logo-badge.mandiri { background: #eab308; color: #1e293b; }
+
+    .bank-card-selectable .bi-check-circle-fill {
+        margin-left: auto;
+        color: var(--primary-purple);
+        opacity: 0;
+        transition: opacity 0.15s;
+    }
+
+    .bank-card-selectable.selected .bi-check-circle-fill {
+        opacity: 1;
+    }
+
+    .copy-feedback {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    /* ==== TRANSFER / VIRTUAL ACCOUNT MODAL ==== */
+    .bank-tab-switch {
+        display: flex;
+        background: #f1f5f9;
+        border-radius: 0.75rem;
+        padding: 4px;
+        gap: 4px;
+    }
+
+    .bank-tab-btn {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        border: none;
+        background: transparent;
+        color: #64748b;
+        font-weight: 700;
+        font-size: 0.85rem;
+        padding: 0.55rem 0.5rem;
+        border-radius: 0.6rem;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .bank-tab-btn.active {
+        background: #ffffff;
+        color: var(--primary-purple);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .bank-tab-btn .mini-logo {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.55rem;
+        font-weight: 800;
+        color: #ffffff;
+    }
+
+    .mini-logo.bca { background: #1e40af; }
+    .mini-logo.mandiri { background: #eab308; color: #1e293b; }
+
+    .va-status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: #fffbeb;
+        color: #b45309;
+        border: 1px solid #fde68a;
+        padding: 0.35rem 0.8rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    .va-status-badge .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #f59e0b;
+        animation: va-pulse 1.4s infinite;
+    }
+
+    @keyframes va-pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.35; }
+    }
+
+    .va-identity-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.9rem;
+    }
+
+    .va-identity-row .bank-logo-badge {
+        width: 42px;
+        height: 42px;
+        font-size: 0.75rem;
+    }
+
+    .va-identity-row .va-identity-label {
+        font-size: 0.7rem;
+        color: #94a3b8;
+        font-weight: 600;
+    }
+
+    .va-number-box {
+        background: #ffffff;
+        border: 1.5px dashed var(--secondary-purple);
+        border-radius: 0.85rem;
+        padding: 0.9rem 1rem;
+        margin-bottom: 0.65rem;
+    }
+
+    .va-number-value {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 1.4rem;
+        font-weight: 800;
+        letter-spacing: 1px;
+        color: #1e293b;
+        word-break: break-all;
+    }
+
+    .va-copy-btn {
+        width: 100%;
+        border: none;
+        border-radius: 0.6rem;
+        padding: 0.6rem;
+        font-weight: 700;
+        font-size: 0.85rem;
+        background: var(--primary-purple);
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        transition: background 0.15s;
+    }
+
+    .va-copy-btn:hover {
+        background: var(--primary-hover);
+        color: #ffffff;
+    }
+
+    .va-copy-btn.copied {
+        background: #16a34a;
+    }
+
+    .va-amount-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #faf5ff;
+        border: 1px solid #ede9fe;
+        border-radius: 0.7rem;
+        padding: 0.7rem 0.9rem;
+        margin-bottom: 0.9rem;
+    }
+
+    .va-amount-row .amount-value {
+        font-weight: 800;
+        color: var(--primary-purple);
+        font-size: 1rem;
+    }
+
+    .va-amount-copy {
+        border: 1px solid var(--secondary-purple);
+        background: #ffffff;
+        color: var(--primary-purple);
+        border-radius: 0.5rem;
+        padding: 0.3rem 0.6rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    .va-timer-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.78rem;
+        color: #64748b;
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+
+    .va-timer-row #transferTimer {
+        color: #dc2626;
+        font-weight: 800;
+        font-family: 'Courier New', Courier, monospace;
+    }
+
+    .va-instructions summary {
+        cursor: pointer;
+        list-style: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: #334155;
+        padding: 0.6rem 0;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .va-instructions summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .va-instructions summary .chevron {
+        transition: transform 0.2s;
+        color: var(--primary-purple);
+    }
+
+    .va-instructions[open] summary .chevron {
+        transform: rotate(180deg);
+    }
+
+    .va-instructions ol {
+        margin: 0 0 0.75rem 0;
+        padding-left: 1.1rem;
+        font-size: 0.8rem;
+        color: #475569;
+        line-height: 1.6;
+    }
+
+    .va-qr-toggle-btn {
+        background: none;
+        border: none;
+        color: var(--primary-purple);
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-decoration: underline;
+        padding: 0;
+        margin: 0.5rem 0 0.9rem;
+    }
+
+    /* Quick cash denomination buttons */
+    .quick-cash-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+        margin-top: 0.6rem;
+    }
+
+    .quick-cash-btn {
+        border: 1.5px solid #e2e8f0;
+        background: #ffffff;
+        color: #334155;
+        border-radius: 0.6rem;
+        padding: 0.45rem 0.3rem;
+        font-size: 0.8rem;
+        font-weight: 700;
+        transition: all 0.15s;
+        cursor: pointer;
+    }
+
+    .quick-cash-btn:hover {
+        border-color: var(--secondary-purple);
+        background: var(--accent-purple-light);
+        color: var(--primary-purple);
+    }
+
+    .quick-cash-btn.active {
+        border-color: var(--primary-purple);
+        background: var(--primary-purple);
+        color: #ffffff;
+    }
+
+    /* Change / kembalian result card */
+    .change-result-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 0.75rem;
+        padding: 0.75rem 1rem;
+        border-radius: 0.75rem;
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        transition: all 0.2s;
+    }
+
+    .change-result-card.insufficient {
+        background: #fef2f2;
+        border-color: #fecaca;
+    }
+
+    .change-result-card .change-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: none;
+    }
+
+    .change-result-card .change-value {
+        font-size: 1.05rem;
+        font-weight: 800;
+    }
+
+    .change-result-card.insufficient .change-value { color: #dc2626; }
+    .change-result-card:not(.insufficient) .change-value { color: #16a34a; }
 
     /* Print Struk Thermal 80mm */
     #receipt-print {
@@ -525,11 +850,14 @@
                         <div id="cashInputContainer" class="mb-3 d-none">
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0 rounded-start-pill ps-3 text-muted fw-bold">Rp</span>
-                                <input type="number" id="cashAmountInput" name="cash_amount" class="form-control bg-light border-start-0 rounded-end-pill shadow-none" placeholder="Uang Diterima" oninput="calculateChange()" {{ $sale->status === 'COMPLETED' ? 'disabled' : '' }}>
+                                <input type="number" id="cashAmountInput" name="cash_amount" class="form-control bg-light border-start-0 rounded-end-pill shadow-none" placeholder="Uang Diterima" oninput="calculateChange(); syncActiveQuickBtn();" {{ $sale->status === 'COMPLETED' ? 'disabled' : '' }}>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center mt-2 px-2 small">
-                                <span class="text-muted fw-semibold">Kembalian:</span>
-                                <span id="changeTextDisplay" class="fw-bold text-success">Rp 0</span>
+
+                            <div class="quick-cash-row" id="quickCashRow"></div>
+
+                            <div id="changeResultCard" class="change-result-card">
+                                <span class="change-label">Kembalian</span>
+                                <span id="changeTextDisplay" class="change-value">Rp 0</span>
                             </div>
                         </div>
 
@@ -612,60 +940,99 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-4">
-                <p class="text-muted small mb-3">Pilih salah satu bank di bawah untuk melihat QR Code & Nomor Rekening:</p>
 
-                {{-- Tombol Pilihan Bank --}}
-                <div class="row g-2 mb-3">
-                    <div class="col-6">
-                        <div class="bank-card-selectable p-2 text-center selected" id="cardBca" onclick="selectBank('BCA')">
-                            <span class="badge bg-primary rounded-pill mb-1">BCA</span>
-                            <div class="fw-bold text-dark small">Bank BCA</div>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="bank-card-selectable p-2 text-center" id="cardMandiri" onclick="selectBank('MANDIRI')">
-                            <span class="badge bg-warning text-dark rounded-pill mb-1">Mandiri</span>
-                            <div class="fw-bold text-dark small">Bank Mandiri</div>
-                        </div>
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <span class="va-status-badge"><span class="dot"></span> Menunggu Pembayaran</span>
+                    <div class="va-timer-row mb-0">
+                        Batas waktu: <span id="transferTimer">15:00</span>
                     </div>
                 </div>
 
-                {{-- Area Tampilan Detail Bank Terpilih (default: BCA, dari $user) --}}
-                <div class="p-3 mb-3 border rounded-3 bg-light text-center">
-                    <div class="mb-2">
-                        <span id="bankNameDisplay" class="fw-bold text-dark fs-5">Bank BCA</span>
-                    </div>
+                {{-- Segmented switch pilih bank tujuan --}}
+                <div class="bank-tab-switch mb-3">
+                    <button type="button" class="bank-tab-btn active" id="cardBca" onclick="selectBank('BCA')">
+                        <span class="mini-logo bca">BCA</span> Bank BCA
+                    </button>
+                    <button type="button" class="bank-tab-btn" id="cardMandiri" onclick="selectBank('MANDIRI')">
+                        <span class="mini-logo mandiri">MDR</span> Bank Mandiri
+                    </button>
+                </div>
 
-                    {{-- QR Code Bank --}}
-                    <div class="mb-3">
-                        <img id="bankQrDisplay" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=TRANSFER-BCA-{{ $bcaNumberClean }}-TOTAL-{{ $sale->total_pembayaran }}" alt="QR Transfer" class="img-fluid rounded-3 border bg-white p-2 shadow-sm" style="max-width: 170px;">
-                        <div class="small text-muted mt-1" style="font-size: 0.75rem;">Scan via Mobile Banking / E-Wallet</div>
+                {{-- Identitas bank tujuan --}}
+                <div class="va-identity-row">
+                    <div class="bank-logo-badge bca" id="bankLogoDisplay">BCA</div>
+                    <div>
+                        <span class="va-identity-label d-block">Transfer ke Virtual Account</span>
+                        <span id="bankNameDisplay" class="fw-bold text-dark">Bank BCA</span>
                     </div>
+                </div>
 
-                    {{-- Details Nomor Rekening & Salin --}}
-                    <div class="bg-white p-2 rounded border d-flex align-items-center justify-content-between mb-2">
-                        <div class="text-start ps-2">
-                            <div class="text-muted" style="font-size: 0.7rem;">Nomor Rekening / VA</div>
-                            <div id="bankAccountNumber" class="fw-extrabold text-dark fs-6">{{ $bcaNumber }}</div>
-                        </div>
-                        <button type="button" class="btn btn-sm btn-outline-primary fw-semibold" onclick="copyCurrentBankNo()">
-                            <i class="bi bi-copy"></i> Salin
-                        </button>
-                    </div>
-
-                    <div class="text-muted text-start ps-1" style="font-size: 0.75rem;">
+                {{-- Nomor VA --}}
+                <div class="va-number-box text-center">
+                    <div class="va-identity-label mb-1">Nomor Virtual Account</div>
+                    <div id="bankAccountNumber" class="va-number-value">{{ $bcaNumber }}</div>
+                    <div class="text-muted mt-1" style="font-size: 0.75rem;">
                         Atas Nama: <strong id="bankAccountHolder">{{ $bcaHolder }}</strong>
                     </div>
                 </div>
 
-                <div class="payment-summary-box p-3 mb-3 text-center">
-                    <span class="text-muted small text-uppercase fw-bold d-block mb-1">Total Yang Harus Ditransfer</span>
-                    <h3 class="fw-extrabold mb-0" style="color: var(--primary-purple);">
-                        Rp {{ number_format($sale->total_pembayaran, 0, ',', '.') }}
-                    </h3>
+                <button type="button" class="va-copy-btn mb-3" id="copyBankBtn" onclick="copyCurrentBankNo()">
+                    <i class="bi bi-copy"></i> Salin Nomor VA
+                </button>
+
+                {{-- Nominal transfer --}}
+                <div class="va-amount-row">
+                    <div>
+                        <div class="va-identity-label">Nominal Transfer</div>
+                        <div class="amount-value">Rp {{ number_format($sale->total_pembayaran, 0, ',', '.') }}</div>
+                    </div>
+                    <button type="button" class="va-amount-copy" onclick="copyTransferAmount()">
+                        <i class="bi bi-copy"></i> Salin
+                    </button>
                 </div>
 
-                <div class="d-grid gap-2">
+                <p class="text-muted mb-2" style="font-size: 0.75rem;">
+                    <i class="bi bi-info-circle"></i> Transfer sesuai nominal di atas agar pembayaran mudah diverifikasi.
+                </p>
+
+                {{-- Cara transfer (accordion) --}}
+                <details class="va-instructions">
+                    <summary>
+                        <span><i class="bi bi-phone me-1"></i> Cara Bayar - Mobile / Internet Banking</span>
+                        <i class="bi bi-chevron-down chevron"></i>
+                    </summary>
+                    <ol>
+                        <li>Buka aplikasi Mobile/Internet Banking bank kamu.</li>
+                        <li>Pilih menu <strong>Transfer</strong> ke bank tujuan di atas.</li>
+                        <li>Masukkan Nomor Virtual Account: <strong id="vaInlineRef">{{ $bcaNumber }}</strong></li>
+                        <li>Pastikan nama penerima & nominal sudah sesuai, lalu konfirmasi.</li>
+                        <li>Setelah transfer berhasil, klik tombol <em>"Konfirmasi Pembayaran Diterima"</em> di bawah.</li>
+                    </ol>
+                </details>
+
+                <details class="va-instructions">
+                    <summary>
+                        <span><i class="bi bi-credit-card me-1"></i> Cara Bayar - ATM</span>
+                        <i class="bi bi-chevron-down chevron"></i>
+                    </summary>
+                    <ol>
+                        <li>Masukkan kartu ATM & PIN di mesin ATM bank manapun.</li>
+                        <li>Pilih menu <strong>Transfer &rarr; Ke Rekening Bank Lain</strong> (jika beda bank).</li>
+                        <li>Masukkan Nomor Virtual Account: <strong id="vaInlineRefAtm">{{ $bcaNumber }}</strong></li>
+                        <li>Masukkan nominal sesuai total di atas, lalu ikuti instruksi hingga selesai.</li>
+                    </ol>
+                </details>
+
+                <button type="button" class="va-qr-toggle-btn" onclick="toggleQrSection()" id="qrToggleBtn">
+                    Atau scan QR untuk transfer &rsaquo;
+                </button>
+
+                <div id="qrSection" class="text-center d-none mb-3">
+                    <img id="bankQrDisplay" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=TRANSFER-BCA-{{ $bcaNumberClean }}-TOTAL-{{ $sale->total_pembayaran }}" alt="QR Transfer" class="img-fluid rounded-3 border bg-white p-2 shadow-sm" style="max-width: 160px;">
+                    <div class="small text-muted mt-1" style="font-size: 0.72rem;">Scan via Mobile Banking / E-Wallet</div>
+                </div>
+
+                <div class="d-grid gap-2 mt-2">
                     <button type="button" onclick="submitFinalCheckout()" class="btn btn-success fw-bold rounded-pill py-2.5 shadow-sm">
                         <i class="bi bi-check-circle-fill me-1"></i> Konfirmasi Pembayaran Diterima
                     </button>
@@ -812,18 +1179,64 @@
         }
     }
 
+    // ==== QUICK CASH DENOMINATION BUTTONS ====
+    function generateQuickCashOptions(total) {
+        const options = new Set();
+        options.add(total); // uang pas
+
+        const steps = [5000, 10000, 20000, 50000, 100000];
+        steps.forEach(step => {
+            const rounded = Math.ceil(total / step) * step;
+            if (rounded > total) options.add(rounded);
+        });
+
+        return Array.from(options).sort((a, b) => a - b).slice(0, 6);
+    }
+
+    function renderQuickCashButtons() {
+        const total = Number({{ (float) $sale->total_pembayaran }});
+        const row = document.getElementById('quickCashRow');
+        if (!row) return;
+
+        const options = generateQuickCashOptions(total);
+        row.innerHTML = '';
+
+        options.forEach(amount => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'quick-cash-btn';
+            btn.textContent = amount === total ? 'Uang Pas' : 'Rp ' + amount.toLocaleString('id-ID');
+            btn.dataset.amount = amount;
+            btn.onclick = function () {
+                document.getElementById('cashAmountInput').value = amount;
+                calculateChange();
+                syncActiveQuickBtn();
+            };
+            row.appendChild(btn);
+        });
+    }
+
+    function syncActiveQuickBtn() {
+        const current = Number(document.getElementById('cashAmountInput').value) || 0;
+        document.querySelectorAll('.quick-cash-btn').forEach(btn => {
+            btn.classList.toggle('active', Number(btn.dataset.amount) === current);
+        });
+    }
+
     function calculateChange() {
         const total = Number({{ (float) $sale->total_pembayaran }});
         const cash = Number(document.getElementById('cashAmountInput').value) || 0;
         const change = cash - total;
 
+        const card = document.getElementById('changeResultCard');
         const display = document.getElementById('changeTextDisplay');
+
         if (change >= 0) {
-            display.className = "fw-bold text-success";
+            card.classList.remove('insufficient');
             display.textContent = "Rp " + change.toLocaleString('id-ID');
         } else {
-            display.className = "fw-bold text-danger";
-            display.textContent = "- Rp " + Math.abs(change).toLocaleString('id-ID');
+            card.classList.add('insufficient');
+            display.textContent = "Kurang Rp " + Math.abs(change).toLocaleString('id-ID');
         }
     }
 
@@ -853,13 +1266,19 @@
         activeBank = bank;
         document.getElementById('selectedBankInput').value = bank;
 
-        document.getElementById('cardBca').classList.remove('selected');
-        document.getElementById('cardMandiri').classList.remove('selected');
+        document.getElementById('cardBca').classList.remove('active');
+        document.getElementById('cardMandiri').classList.remove('active');
+
+        const logoDisplay = document.getElementById('bankLogoDisplay');
 
         if (bank === 'BCA') {
-            document.getElementById('cardBca').classList.add('selected');
+            document.getElementById('cardBca').classList.add('active');
+            logoDisplay.className = 'bank-logo-badge bca';
+            logoDisplay.textContent = 'BCA';
         } else if (bank === 'MANDIRI') {
-            document.getElementById('cardMandiri').classList.add('selected');
+            document.getElementById('cardMandiri').classList.add('active');
+            logoDisplay.className = 'bank-logo-badge mandiri';
+            logoDisplay.textContent = 'MDR';
         }
 
         const info = bankData[bank];
@@ -867,13 +1286,56 @@
         document.getElementById('bankAccountNumber').textContent = info.number;
         document.getElementById('bankAccountHolder').textContent = info.holder;
         document.getElementById('bankQrDisplay').src = info.qrUrl;
+
+        const vaRef = document.getElementById('vaInlineRef');
+        const vaRefAtm = document.getElementById('vaInlineRefAtm');
+        if (vaRef) vaRef.textContent = info.number;
+        if (vaRefAtm) vaRefAtm.textContent = info.number;
     }
 
     function copyCurrentBankNo() {
         const info = bankData[activeBank];
         navigator.clipboard.writeText(info.cleanNumber).then(() => {
-            alert(`Nomor Rekening ${info.name} (${info.number}) berhasil disalin!`);
+            const btn = document.getElementById('copyBankBtn');
+            const original = btn.innerHTML;
+            btn.innerHTML = '<i class="bi bi-check-lg"></i> Nomor VA Tersalin';
+            btn.classList.add('copied');
+            setTimeout(() => {
+                btn.innerHTML = original;
+                btn.classList.remove('copied');
+            }, 1500);
         });
+    }
+
+    function copyTransferAmount() {
+        const total = Number({{ (float) $sale->total_pembayaran }});
+        navigator.clipboard.writeText(String(total)).then(() => {
+            const btn = event.currentTarget;
+            const original = btn.innerHTML;
+            btn.innerHTML = '<i class="bi bi-check-lg"></i> Tersalin';
+            setTimeout(() => { btn.innerHTML = original; }, 1500);
+        });
+    }
+
+    function toggleQrSection() {
+        const section = document.getElementById('qrSection');
+        const btn = document.getElementById('qrToggleBtn');
+        const hidden = section.classList.toggle('d-none');
+        btn.textContent = hidden ? 'Atau scan QR untuk transfer \u203a' : 'Sembunyikan QR \u2039';
+    }
+
+    let transferTimerInterval;
+
+    function startTransferTimer(sec) {
+        clearInterval(transferTimerInterval);
+        transferTimerInterval = setInterval(() => {
+            let m = Math.floor(sec / 60), s = sec % 60;
+            const el = document.getElementById('transferTimer');
+            if (el) el.textContent = `${m < 10 ? '0':''}${m}:${s < 10 ? '0':''}${s}`;
+            if (--sec < 0) {
+                clearInterval(transferTimerInterval);
+            }
+        }, 1000);
     }
 
     let timerInterval;
@@ -909,6 +1371,8 @@
             const bankModalEl = document.getElementById('bankModal');
             const modal = bootstrap.Modal.getOrCreateInstance(bankModalEl);
             modal.show();
+            startTransferTimer(900);
+            bankModalEl.addEventListener('hidden.bs.modal', () => clearInterval(transferTimerInterval));
         }
     }
 
@@ -934,6 +1398,7 @@
 
     document.addEventListener("DOMContentLoaded", () => {
         toggleCashInput();
+        renderQuickCashButtons();
     });
 </script>
 

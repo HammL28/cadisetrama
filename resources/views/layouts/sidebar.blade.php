@@ -17,7 +17,10 @@
         left: 0;
         width: var(--sidebar-width);
         height: 100vh;
-        background: linear-gradient(135deg, var(--purple-dark) 0%, var(--purple-deep) 25%, var(--purple-main) 50%, var(--purple-light) 75%, var(--pink-accent) 100%);
+        /* --custom-color-from / --custom-color-to diisi lewat inline style dari data user */
+        --custom-color-from: var(--purple-dark);
+        --custom-color-to: var(--pink-accent);
+        background: linear-gradient(135deg, var(--custom-color-from) 0%, var(--custom-color-to) 100%);
         box-shadow: 4px 0 32px rgba(139, 92, 246, 0.4);
         z-index: 1000;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -35,8 +38,36 @@
         border-bottom: 1px solid rgba(255, 255, 255, 0.15);
         display: flex;
         align-items: center;
-        gap: 1rem;
+        gap: 0.9rem;
         min-height: 80px;
+    }
+
+    /* Kotak/lingkaran logo di SAMPING teks judul (bukan watermark di belakang) */
+    .sidebar-brand-logo-box {
+        width: 45px;
+        height: 45px;
+        border-radius: 12px; /* default: kotak membulat */
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+
+    .sidebar-brand-logo-box.shape-circle {
+        border-radius: 50%;
+    }
+
+    .sidebar-brand-logo-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .sidebar-wrapper.collapsed .sidebar-brand-logo-box {
+        margin: 0 auto;
     }
 
     .sidebar-brand-logo {
@@ -70,6 +101,7 @@
         letter-spacing: 0.5px;
         white-space: nowrap;
         transition: opacity 0.3s ease;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
     }
 
     .sidebar-wrapper.collapsed .sidebar-brand-text {
@@ -359,11 +391,30 @@
 <!-- SIDEBAR OVERLAY FOR MOBILE -->
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
+@php
+    $sbUser        = Auth::user();
+    $sbColorFrom   = $sbUser->sidebar_color_from ?? '#4f46e5';
+    $sbColorTo     = $sbUser->sidebar_color_to ?? '#e879f9';
+    $sbBrandText   = $sbUser->sidebar_brand_text ?? 'POS ILHAM';
+    $sbHasPhoto    = !empty($sbUser->sidebar_bg_photo) && Storage::disk('public')->exists($sbUser->sidebar_bg_photo);
+    $sbLogoShape   = $sbUser->sidebar_logo_shape ?? 'circle'; // 'circle' atau 'square'
+@endphp
+
 <!-- SIDEBAR -->
-<div class="sidebar-wrapper" id="sidebar">
+<div class="sidebar-wrapper"
+     id="sidebar"
+     style="--custom-color-from: {{ $sbColorFrom }}; --custom-color-to: {{ $sbColorTo }};">
+
     <!-- HEADER -->
     <div class="sidebar-header">
-        <div class="sidebar-brand-text">POS ILHAM</div>
+
+        @if($sbHasPhoto)
+            <div class="sidebar-brand-logo-box {{ $sbLogoShape === 'circle' ? 'shape-circle' : '' }}">
+                <img src="{{ asset('storage/' . $sbUser->sidebar_bg_photo) }}" alt="Logo Toko">
+            </div>
+        @endif
+
+        <div class="sidebar-brand-text">{{ $sbBrandText }}</div>
     </div>
 
     <!-- MENU -->
@@ -389,7 +440,7 @@
         </li>
         @endif
 
-        
+
         {{-- MENU JENIS (Admin & Kasir) --}}
         <li class="sidebar-menu-item">
             <a class="sidebar-menu-link {{ Request::is('jenis*') ? 'active' : '' }}" href="{{ route('jenis.index') }}">
