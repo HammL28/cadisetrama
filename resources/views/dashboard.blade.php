@@ -224,7 +224,7 @@
                     </div>
                 </div>
                 <h1 class="fw-bold text-white mb-2 fs-2">
-                    {{ __('Selamat Datang Kembali') }}! 👋
+                    {{ __('Selamat Datang ') }}! 
                 </h1>
                 <p class="text-white-50 mb-0 fs-6">{{ __('Berikut adalah ringkasan performa toko Anda hari ini.') }}</p>
             </div>

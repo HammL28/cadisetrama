@@ -392,12 +392,15 @@
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 @php
-    $sbUser        = Auth::user();
-    $sbColorFrom   = $sbUser->sidebar_color_from ?? '#4f46e5';
-    $sbColorTo     = $sbUser->sidebar_color_to ?? '#e879f9';
-    $sbBrandText   = $sbUser->sidebar_brand_text ?? 'POS ILHAM';
-    $sbHasPhoto    = !empty($sbUser->sidebar_bg_photo) && Storage::disk('public')->exists($sbUser->sidebar_bg_photo);
-    $sbLogoShape   = $sbUser->sidebar_logo_shape ?? 'circle'; // 'circle' atau 'square'
+    $sbUser = Auth::user();
+    $sbConfigUser = \App\Models\User::whereHas('role', function ($query) {
+        $query->whereRaw('LOWER(name) = ?', ['admin']);
+    })->first() ?? $sbUser;
+    $sbColorFrom   = $sbConfigUser->sidebar_color_from ?? '#4f46e5';
+    $sbColorTo     = $sbConfigUser->sidebar_color_to ?? '#e879f9';
+    $sbBrandText   = $sbConfigUser->sidebar_brand_text ?? '';
+    $sbHasPhoto    = !empty($sbConfigUser->sidebar_bg_photo) && Storage::disk('public')->exists($sbConfigUser->sidebar_bg_photo);
+    $sbLogoShape   = $sbConfigUser->sidebar_logo_shape ?? 'circle'; // 'circle' atau 'square'
 @endphp
 
 <!-- SIDEBAR -->
@@ -410,7 +413,7 @@
 
         @if($sbHasPhoto)
             <div class="sidebar-brand-logo-box {{ $sbLogoShape === 'circle' ? 'shape-circle' : '' }}">
-                <img src="{{ asset('storage/' . $sbUser->sidebar_bg_photo) }}" alt="Logo Toko">
+                <img src="{{ asset('storage/' . $sbConfigUser->sidebar_bg_photo) }}" alt="Logo Toko" style="opacity: {{ 1 - (($sbConfigUser->sidebar_bg_opacity ?? 25) / 100) }};">
             </div>
         @endif
 
@@ -466,15 +469,7 @@
             </a>
         </li>
 
-        {{-- MENU PENGATURAN TOKO (Admin Only) --}}
-        @if(Auth::check() && strtolower($userRole) === 'admin')
-        <li class="sidebar-menu-item">
-            <a class="sidebar-menu-link {{ Request::is('settings*') ? 'active' : '' }}" href="{{ route('settings.index') }}">
-                <i class="bi bi-gear-fill sidebar-menu-icon"></i>
-                <span class="sidebar-menu-text">Pengaturan Toko</span>
-            </a>
-        </li>
-        @endif
+ 
 
         {{-- MENU AKUN --}}
         <li class="sidebar-menu-item mt-3">
@@ -490,20 +485,23 @@
             </a>
         </li>
 
-        @if(Auth::check() && Auth::user()->role && (Auth::user()->role->name === 'admin' || Auth::user()->role->NAME === 'ADMIN'))
+        @if(Auth::check() && strtolower($userRole) === 'admin')
         <li class="sidebar-menu-item">
-            <a class="sidebar-menu-link {{ Request::is('notifications*') ? 'active' : '' }}" href="{{ route('notifications.index') }}">
-                <i class="bi bi-bell-fill sidebar-menu-icon"></i>
-                <span class="sidebar-menu-text">Notifikasi</span>
-                @if(Auth::user()->unreadNotifications->count() > 0)
-                <span class="badge rounded-pill" style="background: #ef4444; color: white; font-size: 0.7rem; margin-left: auto;">
-                    {{ Auth::user()->unreadNotifications->count() }}
-                </span>
-                @endif
+            <a class="sidebar-menu-link {{ Request::is('settings*') ? 'active' : '' }}" href="{{ route('settings.index') }}">
+                <i class="bi bi-shop-window sidebar-menu-icon"></i>
+                <span class="sidebar-menu-text">Pengaturan Toko</span>
             </a>
         </li>
         @endif
-    </ul>
+
+        <li class="sidebar-menu-item">
+            <a class="sidebar-menu-link {{ Request::is('tentang*') ? 'active' : '' }}" href="{{ route('tentang.index') }}">
+                <i class="bi bi-info-circle-fill sidebar-menu-icon"></i>
+                <span class="sidebar-menu-text">Tentang Aplikasi</span>
+            </a>
+        </li>
+
+       
 
     <!-- FOOTER - USER PROFILE -->
     <div class="sidebar-footer">

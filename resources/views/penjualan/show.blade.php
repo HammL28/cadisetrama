@@ -18,7 +18,7 @@
     $userPenjualan = $storeOwner ?? $penjualan->user ?? Auth::user();
 
     $storeName = $userPenjualan->store_name ?? 'ILHAM JAYA HEBAT';
-    $storeAddress = $userPenjualan->store_address ?? 'JL.JL.JL.J';
+    $storeAddress = $userPenjualan->store_address ?? 'KP.CIPEUSAR';
     $storePhone = $userPenjualan->store_phone ?? '087786888522';
 
     // === DATA PETUGAS YANG BENAR-BENAR MELAKUKAN TRANSAKSI ===
@@ -39,7 +39,9 @@
     $roleLabel = ucfirst(strtolower($roleNameRaw));
 
     // Ukuran kertas thermal dari Pengaturan Toko (58mm / 80mm)
-    $paperSize = $userPenjualan->paper_size ?? '58mm';
+    $paperSize = in_array($userPenjualan->paper_size ?? '58mm', ['58mm', '80mm'], true)
+        ? ($userPenjualan->paper_size ?? '58mm')
+        : '58mm';
 @endphp
 
 <style>
@@ -121,12 +123,13 @@
             width: 100% !important;
             max-width: {{ $paperSize }} !important;
             margin: 0 auto !important;
-            padding: 2mm 3mm !important;
+            padding: 4mm 3.5mm !important;
             background: #ffffff !important;
             font-family: 'Courier New', Courier, monospace !important;
-            font-size: 12px !important;
-            line-height: 1.3 !important;
+            font-size: 13px !important;
+            line-height: 1.45 !important;
             box-sizing: border-box !important;
+            overflow-wrap: anywhere !important;
         }
 
         #receipt-print-area table {
@@ -141,6 +144,33 @@
         #receipt-print-area td, 
         #receipt-print-area th {
             display: table-cell !important;
+            vertical-align: top !important;
+            overflow-wrap: anywhere !important;
+        }
+
+        #receipt-print-area .receipt-store-name {
+            font-size: 20px !important;
+            line-height: 1.2 !important;
+            color: #000000 !important;
+        }
+
+        #receipt-print-area .receipt-store-detail,
+        #receipt-print-area .receipt-meta,
+        #receipt-print-area .receipt-item-price,
+        #receipt-print-area .receipt-footer {
+            font-size: 12px !important;
+            color: #000000 !important;
+        }
+
+        #receipt-print-area .receipt-total {
+            font-size: 16px !important;
+            line-height: 1.35 !important;
+            color: #000000 !important;
+        }
+
+        #receipt-print-area .receipt-item-name {
+            font-size: 13px !important;
+            color: #000000 !important;
         }
     }
 </style>
@@ -156,11 +186,7 @@
                 </h2>
                 <p class="text-white opacity-75 small mb-0">Informasi rincian transaksi dan daftar barang yang dibeli.</p>
             </div>
-            
-            <div class="d-flex align-items-center gap-2">
-                <button onclick="window.print()" class="btn btn-light rounded-pill px-3 fw-semibold text-purple shadow-sm d-flex align-items-center gap-1">
-                    <i class="bi bi-printer-fill"></i> Cetak Struk
-                </button>
+           
                 <a href="{{ route('penjualan.index') }}" class="btn btn-outline-light rounded-pill px-4 fw-semibold shadow-sm d-flex align-items-center gap-1">
                     <i class="bi bi-arrow-left"></i> Kembali
                 </a>
@@ -288,73 +314,73 @@
 
 {{-- AREA STRUK UNTUK PRINT --}}
 <div id="receipt-print-area">
-    <div style="text-align: center; border-bottom: 2px dashed #8b5cf6; padding-bottom: 6px; margin-bottom: 6px;">
-        <h3 style="margin: 0; font-size: 16px; font-weight: bold; text-transform: uppercase; color: #8b5cf6;">
+    <div style="text-align: center; border-bottom: 2px dashed #000; padding-bottom: 9px; margin-bottom: 9px;">
+        <h3 class="receipt-store-name" style="margin: 0; font-size: 20px; line-height: 1.2; font-weight: bold; text-transform: uppercase; color: #000;">
             {{ $storeName }}
         </h3>
-        <p style="margin: 2px 0 0 0; font-size: 11px; color: #4b5563;">
+        <p class="receipt-store-detail" style="margin: 4px 0 0 0; font-size: 12px; color: #000;">
             {{ $storeAddress }}
         </p>
-        <p style="margin: 1px 0 0 0; font-size: 11px; color: #4b5563;">
+        <p class="receipt-store-detail" style="margin: 2px 0 0 0; font-size: 12px; color: #000;">
             Telp / WA: {{ $storePhone }}
         </p>
     </div>
 
-    <table style="width: 100%; font-size: 12px; border-collapse: collapse; margin-bottom: 6px; color: #1f2937;">
+    <table class="receipt-meta" style="width: 100%; font-size: 13px; border-collapse: collapse; margin-bottom: 9px; color: #000;">
         <tr>
-            <td style="padding: 1px 0;">No. Trx:</td>
-            <td style="text-align: right; padding: 1px 0; font-weight: bold; color: #8b5cf6;">#{{ $penjualan->id }}</td>
+            <td style="padding: 2px 0;">No. Trx:</td>
+            <td style="text-align: right; padding: 2px 0; font-weight: bold; color: #000;">#{{ $penjualan->id }}</td>
         </tr>
         <tr>
-            <td style="padding: 1px 0;">Tanggal:</td>
-            <td style="text-align: right; padding: 1px 0;">{{ $penjualan->created_at->format('d/m/Y H:i') }}</td>
+            <td style="padding: 2px 0;">Tanggal:</td>
+            <td style="text-align: right; padding: 2px 0;">{{ $penjualan->created_at->format('d/m/Y H:i') }}</td>
         </tr>
         <tr>
-            <td style="padding: 1px 0;">{{ $roleLabel }}:</td>
-            <td style="text-align: right; padding: 1px 0; font-weight: bold;">{{ $cashierName }}</td>
+            <td style="padding: 2px 0;">{{ $roleLabel }}:</td>
+            <td style="text-align: right; padding: 2px 0; font-weight: bold;">{{ $cashierName }}</td>
         </tr>
         <tr>
-            <td style="padding: 1px 0;">Metode Bayar:</td>
-            <td style="text-align: right; padding: 1px 0; font-weight: bold; color: #8b5cf6;">
+            <td style="padding: 2px 0;">Metode Bayar:</td>
+            <td style="text-align: right; padding: 2px 0; font-weight: bold; color: #000;">
                 {{ strtoupper($penjualan->metode_pembayaran) }}
             </td>
         </tr>
     </table>
 
-    <div style="border-top: 1px dashed #8b5cf6; margin: 4px 0;"></div>
+    <div style="border-top: 1px dashed #000; margin: 8px 0;"></div>
 
-    <table style="width: 100%; font-size: 12px; border-collapse: collapse; color: #1f2937;">
+    <table style="width: 100%; font-size: 13px; border-collapse: collapse; color: #000;">
         @foreach($penjualan->itemPenjualan as $item)
             <tr>
-                <td colspan="2" style="font-weight: bold; padding-top: 2px;">
+                <td colspan="2" class="receipt-item-name" style="font-weight: bold; padding-top: 5px; color: #000;">
                     {{ $item->produk->nama ?? $item->produk->nama_produk ?? 'Produk' }}
                 </td>
             </tr>
             <tr>
-                <td style="padding-bottom: 3px; color: #4b5563;">
+                <td class="receipt-item-price" style="padding-bottom: 5px; color: #000;">
                     {{ $item->kuantitas }} x Rp {{ number_format($item->harga_satuan ?? ($item->subtotal / max($item->kuantitas, 1)), 0, ',', '.') }}
                 </td>
-                <td style="text-align: right; padding-bottom: 3px; font-weight: bold;">
+                <td style="text-align: right; padding-bottom: 5px; font-weight: bold; color: #000;">
                     Rp {{ number_format($item->subtotal, 0, ',', '.') }}
                 </td>
             </tr>
         @endforeach
     </table>
 
-    <div style="border-top: 1px dashed #8b5cf6; margin: 4px 0;"></div>
+    <div style="border-top: 1px dashed #000; margin: 8px 0;"></div>
 
-    <table style="width: 100%; font-size: 14px; font-weight: bold; color: #8b5cf6;">
+    <table class="receipt-total" style="width: 100%; font-size: 16px; line-height: 1.35; font-weight: bold; color: #000;">
         <tr>
             <td>TOTAL BAYAR</td>
             <td style="text-align: right;">Rp {{ number_format($penjualan->total_pembayaran, 0, ',', '.') }}</td>
         </tr>
     </table>
 
-    <div style="border-top: 2px dashed #8b5cf6; margin: 6px 0;"></div>
+    <div style="border-top: 2px dashed #000; margin: 9px 0;"></div>
 
-    <div style="text-align: center; margin-top: 8px; font-size: 11px; color: #4b5563;">
-        <p style="margin: 0; font-weight: bold; color: #8b5cf6;">-- TERIMA KASIH --</p>
-        <p style="margin: 2px 0;">Barang yang sudah dibeli</p>
+    <div class="receipt-footer" style="text-align: center; margin-top: 10px; font-size: 12px; color: #000;">
+        <p style="margin: 0; font-weight: bold; color: #000;">-- TERIMA KASIH --</p>
+        <p style="margin: 3px 0;">Barang yang sudah dibeli</p>
         <p style="margin: 0;">tidak dapat ditukar / dikembalikan</p>
     </div>
 </div>

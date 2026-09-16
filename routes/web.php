@@ -49,6 +49,7 @@ Route::middleware('auth')->group(function () {
 
     // --- FITUR PROFIL & GANTI PASSWORD (Bisa diakses Semua Role) ---
     Route::get('/profile', [UserController::class, 'profile'])->name('profile.index');
+    Route::get('/tentang', [UserController::class, 'tentang'])->name('tentang.index');
     Route::put('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
     Route::put('/profile/password', [UserController::class, 'updatePassword'])->name('profile.password');
 

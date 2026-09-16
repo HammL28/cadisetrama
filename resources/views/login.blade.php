@@ -33,7 +33,7 @@
         body {
             background: 
                 linear-gradient(135deg, rgba(15, 7, 32, 0.75) 0%, rgba(46, 16, 101, 0.7) 100%),
-                url("{{ asset('img/ciwi.png') }}") no-repeat center center / cover,
+              
                 #1e1b4b;
             background-attachment: fixed;
             min-height: 100vh;

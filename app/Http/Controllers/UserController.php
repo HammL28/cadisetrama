@@ -18,6 +18,11 @@ class UserController extends Controller
 
         return view('users.profile', compact('user'));
     }
+
+    public function tentang()
+    {
+        return view('users.tentang');
+    }
     public function updateProfile(Request $request)
     {
         /** @var \App\Models\User $user */

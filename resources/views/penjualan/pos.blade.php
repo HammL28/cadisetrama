@@ -4,6 +4,15 @@
 
 @section('content')
 
+@php
+    $receiptOwner = \App\Models\User::whereHas('role', function ($query) {
+        $query->whereRaw('LOWER(name) = ?', ['admin']);
+    })->first() ?? $user;
+    $receiptPaperSize = in_array($receiptOwner->paper_size ?? '58mm', ['58mm', '80mm'], true)
+        ? ($receiptOwner->paper_size ?? '58mm')
+        : '58mm';
+@endphp
+
 <!-- Font/Icons & CSRF Token Meta -->
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -587,7 +596,7 @@
     .change-result-card.insufficient .change-value { color: #dc2626; }
     .change-result-card:not(.insufficient) .change-value { color: #16a34a; }
 
-    /* Print Struk Thermal 80mm */
+    /* Print struk thermal mengikuti ukuran yang dipilih admin */
     #receipt-print {
         display: none;
     }
@@ -604,12 +613,22 @@
             position: absolute;
             left: 0;
             top: 0;
-            width: 80mm;
-            padding: 5px;
+            width: {{ $receiptPaperSize }};
+            max-width: {{ $receiptPaperSize }};
+            box-sizing: border-box;
+            padding: 3mm;
             font-family: 'Courier New', Courier, monospace;
-            font-size: 12px;
+            font-size: 11px;
+            line-height: 1.35;
             color: #000;
             background: #fff;
+        }
+        #receipt-print table {
+            table-layout: fixed;
+            word-break: break-word;
+        }
+        #receipt-print td {
+            vertical-align: top;
         }
         .receipt-dashed {
             border-top: 1px dashed #000;
@@ -1114,6 +1133,16 @@
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
+    window.addEventListener('beforeprint', function () {
+        var style = document.getElementById('pos-receipt-page-size');
+        if (!style) {
+            style = document.createElement('style');
+            style.id = 'pos-receipt-page-size';
+            document.head.appendChild(style);
+        }
+        style.textContent = '@page { size: {{ $receiptPaperSize }} auto; margin: 0; }';
+    });
+
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

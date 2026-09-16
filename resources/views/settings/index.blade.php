@@ -257,76 +257,7 @@
 
         <div class="row g-4 mb-4">
 
-            {{-- 0. KUSTOMISASI SIDEBAR --}}
-            <div class="col-lg-6">
-                <div class="card dashboard-card h-100">
-                    <div class="card-top-accent"></div>
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-center mb-4">
-                            <div class="icon-box-modern me-3">
-                                <i class="bi bi-palette-fill"></i>
-                            </div>
-                            <div>
-                                <h4 class="fw-bold mb-0" style="color: var(--text-heading);">Tampilan Sidebar</h4>
-                                <span class="text-muted small" style="color: var(--text-muted);">Warna, teks judul, dan foto latar sidebar</span>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="sidebar_brand_text" class="form-label">Teks Judul Sidebar</label>
-                            <input type="text" name="sidebar_brand_text" id="sidebar_brand_text" class="form-control"
-                                   placeholder="POS ILHAM"
-                                   value="{{ old('sidebar_brand_text', $user->sidebar_brand_text ?? 'POS ILHAM') }}">
-                        </div>
-
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <label for="sidebar_color_from" class="form-label">Warna Awal Gradasi</label>
-                                <input type="color" name="sidebar_color_from" id="sidebar_color_from"
-                                       class="form-control form-control-color w-100"
-                                       value="{{ old('sidebar_color_from', $user->sidebar_color_from ?? '#4f46e5') }}">
-                            </div>
-                            <div class="col-6">
-                                <label for="sidebar_color_to" class="form-label">Warna Akhir Gradasi</label>
-                                <input type="color" name="sidebar_color_to" id="sidebar_color_to"
-                                       class="form-control form-control-color w-100"
-                                       value="{{ old('sidebar_color_to', $user->sidebar_color_to ?? '#e879f9') }}">
-                            </div>
-                        </div>
-
-                        {{-- Preview gradasi warna secara langsung (client-side, tidak perlu simpan dulu) --}}
-                        <div class="sidebar-color-preview" id="sidebarColorPreview"></div>
-
-                        <hr class="my-3" style="border-color: var(--card-border);">
-
-                        <div class="mb-2">
-                            <label for="sidebar_bg_photo" class="form-label">Logo Toko (Samping Teks Judul)</label>
-
-                            @if(!empty($user->sidebar_bg_photo) && Storage::disk('public')->exists($user->sidebar_bg_photo))
-                                <div class="p-3 rounded-3 mb-2 d-flex align-items-center gap-3" style="background: var(--icon-bg); border: 1px solid var(--card-border);">
-                                    <img src="{{ asset('storage/' . $user->sidebar_bg_photo) }}"
-                                         alt="Logo sidebar saat ini"
-                                         style="height: 56px; width: 56px; object-fit: cover; border-radius: {{ ($user->sidebar_logo_shape ?? 'circle') === 'circle' ? '50%' : '12px' }}; border: 1px solid var(--card-border); flex-shrink: 0;">
-                                    <span class="small" style="color: var(--text-muted);">Logo saat ini</span>
-                                </div>
-                            @endif
-
-                            <input type="file" name="sidebar_bg_photo" id="sidebar_bg_photo" class="form-control" accept="image/*">
-                            <div class="form-text" style="color: var(--text-muted);">
-                                Format JPG/PNG, maksimal 2MB. Logo akan tampil sebagai kotak/lingkaran kecil di samping teks judul sidebar. Upload file baru untuk mengganti logo yang sudah ada.
-                            </div>
-                        </div>
-
-                        <div class="mb-1">
-                            <label for="sidebar_logo_shape" class="form-label">Bentuk Logo</label>
-                            <select name="sidebar_logo_shape" id="sidebar_logo_shape" class="form-select">
-                                <option value="circle" {{ (old('sidebar_logo_shape', $user->sidebar_logo_shape ?? 'circle') == 'circle') ? 'selected' : '' }}>Bulat</option>
-                                <option value="square" {{ (old('sidebar_logo_shape', $user->sidebar_logo_shape ?? 'circle') == 'square') ? 'selected' : '' }}>Kotak</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
+           
 
             {{-- 1. HEADER STRUK & IDENTITAS TOKO --}}
             <div class="col-lg-6">
@@ -414,90 +345,65 @@
                 </div>
             </div>
 
-            {{-- 3. FOOTER & PESAN PENUTUP --}}
-            <div class="col-lg-6">
-                <div class="card dashboard-card h-100">
+           
+           
+
+            {{-- KUSTOMISASI TAMPILAN SIDEBAR --}}
+            <div class="col-12">
+                <div class="card dashboard-card">
                     <div class="card-top-accent"></div>
                     <div class="card-body p-4">
                         <div class="d-flex align-items-center mb-4">
                             <div class="icon-box-modern me-3">
-                                <i class="bi bi-chat-left-quote"></i>
+                                <i class="bi bi-layout-sidebar-inset"></i>
                             </div>
                             <div>
-                                <h4 class="fw-bold mb-0" style="color: var(--text-heading);">Footer & Pesan Penutup</h4>
-                                <span class="text-muted small" style="color: var(--text-muted);">Pesan ucapan & info sosmed di bawah nota</span>
+                                <h4 class="fw-bold mb-0" style="color: var(--text-heading);">Tampilan Sidebar</h4>
+                                <span class="text-muted small" style="color: var(--text-muted);">Atur nama, warna, logo, dan bentuk tampilan sidebar aplikasi.</span>
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="receipt_footer_msg" class="form-label">Pesan Penutup (Footer)</label>
-                            <textarea name="receipt_footer_msg" id="receipt_footer_msg" class="form-control" rows="2" placeholder="Terima Kasih Atas Kunjungan Anda!">{{ old('receipt_footer_msg', $user->receipt_footer_msg ?? 'Terima Kasih!') }}</textarea>
-                        </div>
+                        <div class="row g-3">
+                            <div class="col-lg-6">
+                                <label for="sidebar_brand_text" class="form-label">Nama Brand Sidebar</label>
+                                <input type="text" name="sidebar_brand_text" id="sidebar_brand_text" class="form-control" maxlength="50" placeholder="POS ILHAM" value="{{ old('sidebar_brand_text', $user->sidebar_brand_text ?? 'POS ILHAM') }}">
+                            </div>
 
-                        <div class="mb-3">
-                            <label for="receipt_social" class="form-label">Info Sosial Media / Website</label>
-                            <input type="text" name="receipt_social" id="receipt_social" class="form-control" placeholder="IG: @tokokamu | www.tokokamu.com" value="{{ old('receipt_social', $user->receipt_social ?? '') }}">
-                        </div>
+                            <div class="col-lg-6">
+                                <label for="sidebar_logo_shape" class="form-label">Bentuk Logo</label>
+                                <select name="sidebar_logo_shape" id="sidebar_logo_shape" class="form-select">
+                                    <option value="circle" {{ old('sidebar_logo_shape', $user->sidebar_logo_shape ?? 'circle') === 'circle' ? 'selected' : '' }}>Lingkaran</option>
+                                    <option value="square" {{ old('sidebar_logo_shape', $user->sidebar_logo_shape ?? 'circle') === 'square' ? 'selected' : '' }}>Kotak Membulat</option>
+                                </select>
+                            </div>
 
-                        <div class="d-flex align-items-center justify-content-between py-3 px-3 rounded-3" style="background: var(--icon-bg); border: 1px solid var(--card-border);">
-                            <div class="flex-grow-1 me-2">
-                                <div class="fw-semibold mb-1" style="color: var(--text-heading);">Cetak Kode QR Transaksi</div>
-                                <div class="small" style="color: var(--text-muted);">Tampilkan QR di bawah nota untuk verifikasi/cek struk</div>
+                            <div class="col-md-6">
+                                <label for="sidebar_color_from" class="form-label">Warna Awal Gradasi</label>
+                                <input type="color" name="sidebar_color_from" id="sidebar_color_from" class="form-control form-control-color w-100" value="{{ old('sidebar_color_from', $user->sidebar_color_from ?? '#4f46e5') }}">
                             </div>
-                            <div class="flex-shrink-0">
-                                <div class="toggle-switch {{ ($user->show_qr_on_receipt ?? true) ? 'active' : '' }}" onclick="toggleSwitch(this)">
-                                    <input type="checkbox" name="show_qr_on_receipt" value="1" {{ ($user->show_qr_on_receipt ?? true) ? 'checked' : '' }} hidden>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            {{-- 4. FORMAT PRINTER & UKURAN KERTAS --}}
-            <div class="col-lg-6">
-                <div class="card dashboard-card h-100">
-                    <div class="card-top-accent"></div>
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-center mb-4">
-                            <div class="icon-box-modern me-3">
-                                <i class="bi bi-printer"></i>
+                            <div class="col-md-6">
+                                <label for="sidebar_color_to" class="form-label">Warna Akhir Gradasi</label>
+                                <input type="color" name="sidebar_color_to" id="sidebar_color_to" class="form-control form-control-color w-100" value="{{ old('sidebar_color_to', $user->sidebar_color_to ?? '#e879f9') }}">
                             </div>
-                            <div>
-                                <h4 class="fw-bold mb-0" style="color: var(--text-heading);">Format Thermal Printer</h4>
-                                <span class="text-muted small" style="color: var(--text-muted);">Pengaturan ukuran dan opsi cetak</span>
-                            </div>
-                        </div>
 
-                        <div class="mb-3">
-                            <label for="paper_size" class="form-label">Ukuran Kertas Thermal</label>
-                            <select name="paper_size" id="paper_size" class="form-select">
-                                <option value="58mm" {{ (old('paper_size', $user->paper_size ?? '') == '58mm') ? 'selected' : '' }}>58 mm (Struk Kecil Standard)</option>
-                                <option value="80mm" {{ (old('paper_size', $user->paper_size ?? '') == '80mm') ? 'selected' : '' }}>80 mm (Struk Lebar / Kasir Besar)</option>
-                            </select>
-                        </div>
+                            <div class="col-12">
+                                <div id="sidebarColorPreview" class="sidebar-color-preview" aria-label="Preview warna sidebar"></div>
+                            </div>
 
-                        <div class="d-flex align-items-center justify-content-between py-3 px-3 rounded-3 mb-3" style="background: var(--icon-bg); border: 1px solid var(--card-border);">
-                            <div class="flex-grow-1 me-2">
-                                <div class="fw-semibold mb-1" style="color: var(--text-heading);">Auto Print Setelah Bayar</div>
-                                <div class="small" style="color: var(--text-muted);">Langsung cetak struk tanpa menekan tombol print</div>
+                            <div class="col-lg-7">
+                                <label for="sidebar_bg_photo" class="form-label">Logo Sidebar</label>
+                                <input type="file" name="sidebar_bg_photo" id="sidebar_bg_photo" class="form-control" accept=".jpg,.jpeg,.png,.webp">
+                                <div class="form-text">Format JPG, PNG, atau WEBP. Ukuran maksimal 2 MB.</div>
+                                @if(!empty($user->sidebar_bg_photo) && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->sidebar_bg_photo))
+                                    <img src="{{ asset('storage/' . $user->sidebar_bg_photo) }}" alt="Logo sidebar saat ini" class="current-photo-preview mt-2">
+                                @endif
                             </div>
-                            <div class="flex-shrink-0">
-                                <div class="toggle-switch {{ ($user->auto_print_receipt ?? true) ? 'active' : '' }}" onclick="toggleSwitch(this)">
-                                    <input type="checkbox" name="auto_print_receipt" value="1" {{ ($user->auto_print_receipt ?? true) ? 'checked' : '' }} hidden>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="d-flex align-items-center justify-content-between py-3 px-3 rounded-3" style="background: var(--icon-bg); border: 1px solid var(--card-border);">
-                            <div class="flex-grow-1 me-2">
-                                <div class="fw-semibold mb-1" style="color: var(--text-heading);">Buka Cash Drawer Otomatis</div>
-                                <div class="small" style="color: var(--text-muted);">Kirim sinyal potong kertas & buka laci uang</div>
-                            </div>
-                            <div class="flex-shrink-0">
-                                <div class="toggle-switch {{ ($user->open_cash_drawer ?? true) ? 'active' : '' }}" onclick="toggleSwitch(this)">
-                                    <input type="checkbox" name="open_cash_drawer" value="1" {{ ($user->open_cash_drawer ?? true) ? 'checked' : '' }} hidden>
-                                </div>
+                            <div class="col-lg-5">
+                                <label for="sidebar_bg_opacity" class="form-label">Transparansi Logo: <span id="sidebarOpacityValue">{{ old('sidebar_bg_opacity', $user->sidebar_bg_opacity ?? 25) }}%</span></label>
+                                <input type="range" name="sidebar_bg_opacity" id="sidebar_bg_opacity" class="form-range mt-2" min="0" max="80" value="{{ old('sidebar_bg_opacity', $user->sidebar_bg_opacity ?? 25) }}">
+                                <div class="form-text">Atur tingkat transparansi logo pada header sidebar.</div>
                             </div>
                         </div>
                     </div>
@@ -545,6 +451,9 @@
 
     document.getElementById('sidebar_color_from').addEventListener('input', updateSidebarColorPreview);
     document.getElementById('sidebar_color_to').addEventListener('input', updateSidebarColorPreview);
+    document.getElementById('sidebar_bg_opacity').addEventListener('input', function () {
+        document.getElementById('sidebarOpacityValue').textContent = `${this.value}%`;
+    });
     document.addEventListener('DOMContentLoaded', updateSidebarColorPreview);
 </script>
 
