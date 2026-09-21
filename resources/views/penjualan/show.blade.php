@@ -296,6 +296,20 @@
                             </tbody>
                             <tfoot class="table-group-divider">
                                 <tr>
+                                    <td colspan="3" class="text-end fw-semibold pt-3">Subtotal:</td>
+                                    <td class="text-end fw-semibold pt-3">
+                                        Rp {{ number_format($penjualan->itemPenjualan->sum('subtotal'), 0, ',', '.') }}
+                                    </td>
+                                </tr>
+                                @if(($penjualan->diskon ?? 0) > 0)
+                                    <tr>
+                                        <td colspan="3" class="text-end fw-semibold text-danger">Diskon:</td>
+                                        <td class="text-end fw-semibold text-danger">
+                                            - Rp {{ number_format($penjualan->diskon, 0, ',', '.') }}
+                                        </td>
+                                    </tr>
+                                @endif
+                                <tr>
                                     <td colspan="3" class="text-end fw-bold fs-5 pt-3">Total Pembayaran:</td>
                                     <td class="text-end fw-bold fs-5 text-purple pt-3">
                                         Rp {{ number_format($penjualan->total_pembayaran, 0, ',', '.') }}
@@ -370,6 +384,16 @@
     <div style="border-top: 1px dashed #000; margin: 8px 0;"></div>
 
     <table class="receipt-total" style="width: 100%; font-size: 16px; line-height: 1.35; font-weight: bold; color: #000;">
+        <tr style="font-size: 13px; font-weight: normal;">
+            <td>SUBTOTAL</td>
+            <td style="text-align: right;">Rp {{ number_format($penjualan->itemPenjualan->sum('subtotal'), 0, ',', '.') }}</td>
+        </tr>
+        @if(($penjualan->diskon ?? 0) > 0)
+            <tr style="font-size: 13px; font-weight: normal;">
+                <td>DISKON</td>
+                <td style="text-align: right;">- Rp {{ number_format($penjualan->diskon, 0, ',', '.') }}</td>
+            </tr>
+        @endif
         <tr>
             <td>TOTAL BAYAR</td>
             <td style="text-align: right;">Rp {{ number_format($penjualan->total_pembayaran, 0, ',', '.') }}</td>

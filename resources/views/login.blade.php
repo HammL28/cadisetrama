@@ -464,7 +464,14 @@
                 <p>Masuk ke akun kasir Anda untuk memulai transaksi</p>
             </div>
 
-            <form action="{{ route('auth') }}" method="POST" id="loginForm">
+            @if(session('login_lock_seconds'))
+                <div class="alert alert-warning d-flex align-items-center gap-2 mb-4" role="alert">
+                    <i class="bi bi-hourglass-split fs-5"></i>
+                    <span>Login dikunci sementara. Coba lagi dalam <strong id="loginCountdown">{{ session('login_lock_seconds') }}</strong> detik.</span>
+                </div>
+            @endif
+
+            <form action="{{ route('auth') }}" method="POST" id="loginForm" data-login-lock-seconds="{{ session('login_lock_seconds', '') }}">
                 @csrf
 
                 <div class="mb-3">
@@ -672,6 +679,28 @@
         const button = document.getElementById('loginButton');
         button.classList.add('loading');
     });
+
+    const loginLockSeconds = document.getElementById('loginForm').dataset.loginLockSeconds;
+
+    if (loginLockSeconds) {
+        let loginSeconds = Number(loginLockSeconds);
+        const loginForm = document.getElementById('loginForm');
+        const loginCountdown = document.getElementById('loginCountdown');
+
+        loginForm.querySelectorAll('input, button[type="submit"]').forEach((element) => {
+            element.disabled = true;
+        });
+
+        const countdownTimer = setInterval(() => {
+            loginSeconds -= 1;
+            loginCountdown.textContent = loginSeconds;
+
+            if (loginSeconds <= 0) {
+                clearInterval(countdownTimer);
+                window.location.reload();
+            }
+        }, 1000);
+    }
 
     @if(session('demo_link'))
         Swal.fire({

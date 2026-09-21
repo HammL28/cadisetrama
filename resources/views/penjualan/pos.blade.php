@@ -11,6 +11,9 @@
     $receiptPaperSize = in_array($receiptOwner->paper_size ?? '58mm', ['58mm', '80mm'], true)
         ? ($receiptOwner->paper_size ?? '58mm')
         : '58mm';
+    $grossTotal = $sale->itemPenjualan->sum('subtotal');
+    $discount = (int) ($sale->diskon ?? 0);
+    $netTotal = max(0, $grossTotal - $discount);
 @endphp
 
 <!-- Font/Icons & CSRF Token Meta -->
@@ -843,11 +846,21 @@
                         @endforelse
                     </div>
 
-                    <div class="payment-summary-box p-3 mb-3 text-center">
-                        <span class="text-muted small text-uppercase fw-bold d-block mb-1" style="letter-spacing: 0.5px;">Total Bayar</span>
-                        <h2 class="fw-extrabold mb-0" style="color: var(--primary-purple); font-weight: 800;">
-                            Rp {{ number_format($sale->total_pembayaran, 0, ',', '.') }}
-                        </h2>
+                    <div class="payment-summary-box p-3 mb-3">
+                        <div class="d-flex justify-content-between small text-muted mb-2">
+                            <span>Subtotal</span>
+                            <strong id="subtotalDisplay">Rp {{ number_format($grossTotal, 0, ',', '.') }}</strong>
+                        </div>
+                        <div class="input-group input-group-sm mb-2">
+                            <span class="input-group-text bg-white border-end-0">Diskon Rp</span>
+                            <input type="number" id="discountInput" name="diskon" form="checkoutForm" class="form-control border-start-0 text-end" min="0" max="{{ $grossTotal }}" value="{{ $discount }}" placeholder="0" {{ $sale->status === 'COMPLETED' ? 'disabled' : '' }}>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center border-top pt-2">
+                            <span class="text-muted small text-uppercase fw-bold" style="letter-spacing: 0.5px;">Total Bayar</span>
+                            <h2 id="totalDisplay" class="fw-extrabold mb-0" style="color: var(--primary-purple); font-weight: 800;">
+                                Rp {{ number_format($netTotal, 0, ',', '.') }}
+                            </h2>
+                        </div>
                     </div>
 
                     {{-- Form Utama POS Checkout --}}
@@ -923,12 +936,12 @@
                 <p class="text-muted small mb-3">Scan QR Code menggunakan aplikasi E-Wallet / Bank Anda.</p>
 
                 <div class="payment-summary-box p-3 d-inline-block shadow-sm mb-3">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=POS-TRX-{{ $sale->id }}-TOTAL-{{ $sale->total_pembayaran }}" alt="QRIS Code" class="img-fluid rounded-3 mb-2">
+                    <img id="qrisQrImage" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=POS-TRX-{{ $sale->id }}-TOTAL-{{ $netTotal }}" alt="QRIS Code" class="img-fluid rounded-3 mb-2">
                     <div class="small fw-bold text-muted"><i class="bi bi-shield-check text-success"></i> STANDAR QRIS NATIONAL</div>
                 </div>
 
                 <div class="fw-bold fs-3 mb-2" style="color: var(--primary-purple);">
-                    Rp {{ number_format($sale->total_pembayaran, 0, ',', '.') }}
+                    <span id="qrisTotalDisplay">Rp {{ number_format($netTotal, 0, ',', '.') }}</span>
                 </div>
 
                 <div class="badge bg-warning text-dark px-3 py-2 rounded-pill small mb-4">
@@ -1003,7 +1016,7 @@
                 <div class="va-amount-row">
                     <div>
                         <div class="va-identity-label">Nominal Transfer</div>
-                        <div class="amount-value">Rp {{ number_format($sale->total_pembayaran, 0, ',', '.') }}</div>
+                        <div class="amount-value" id="transferTotalDisplay">Rp {{ number_format($netTotal, 0, ',', '.') }}</div>
                     </div>
                     <button type="button" class="va-amount-copy" onclick="copyTransferAmount()">
                         <i class="bi bi-copy"></i> Salin
@@ -1047,7 +1060,7 @@
                 </button>
 
                 <div id="qrSection" class="text-center d-none mb-3">
-                    <img id="bankQrDisplay" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=TRANSFER-BCA-{{ $bcaNumberClean }}-TOTAL-{{ $sale->total_pembayaran }}" alt="QR Transfer" class="img-fluid rounded-3 border bg-white p-2 shadow-sm" style="max-width: 160px;">
+                    <img id="bankQrDisplay" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=TRANSFER-BCA-{{ $bcaNumberClean }}-TOTAL-{{ $netTotal }}" alt="QR Transfer" class="img-fluid rounded-3 border bg-white p-2 shadow-sm" style="max-width: 160px;">
                     <div class="small text-muted mt-1" style="font-size: 0.72rem;">Scan via Mobile Banking / E-Wallet</div>
                 </div>
 
@@ -1108,7 +1121,7 @@
     <table class="receipt-table">
         <tr style="font-weight: bold; font-size: 14px;">
             <td>TOTAL</td>
-            <td style="text-align: right;">Rp {{ number_format($sale->total_pembayaran, 0, ',', '.') }}</td>
+            <td style="text-align: right;">Rp {{ number_format($netTotal, 0, ',', '.') }}</td>
         </tr>
         @if(isset($sale->bayar))
             <tr>
@@ -1208,6 +1221,39 @@
         }
     }
 
+    function getCheckoutTotal() {
+        const subtotal = Number({{ (float) $grossTotal }});
+        const discount = Math.min(Math.max(Number(document.getElementById('discountInput')?.value) || 0, 0), subtotal);
+        return subtotal - discount;
+    }
+
+    function updateDiscountSummary() {
+        const discountInput = document.getElementById('discountInput');
+        const subtotal = Number({{ (float) $grossTotal }});
+        const discount = Math.min(Math.max(Number(discountInput.value) || 0, 0), subtotal);
+        const total = subtotal - discount;
+
+        discountInput.value = discount;
+        document.getElementById('totalDisplay').textContent = 'Rp ' + total.toLocaleString('id-ID');
+        const qrisTotal = document.getElementById('qrisTotalDisplay');
+        if (qrisTotal) qrisTotal.textContent = 'Rp ' + total.toLocaleString('id-ID');
+        const qrisQrImage = document.getElementById('qrisQrImage');
+        if (qrisQrImage) {
+            qrisQrImage.src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=POS-TRX-{{ $sale->id }}-TOTAL-' + total;
+        }
+        const transferTotal = document.getElementById('transferTotalDisplay');
+        if (transferTotal) transferTotal.textContent = 'Rp ' + total.toLocaleString('id-ID');
+        if (typeof bankData !== 'undefined') {
+            Object.keys(bankData).forEach((bank) => {
+                bankData[bank].qrUrl = bankData[bank].qrUrl.replace(/TOTAL-[^&]*/, 'TOTAL-' + total);
+            });
+            const bankQrDisplay = document.getElementById('bankQrDisplay');
+            if (bankQrDisplay && typeof activeBank !== 'undefined') {
+                bankQrDisplay.src = bankData[activeBank].qrUrl;
+            }
+        }
+    }
+
     // ==== QUICK CASH DENOMINATION BUTTONS ====
     function generateQuickCashOptions(total) {
         const options = new Set();
@@ -1223,7 +1269,7 @@
     }
 
     function renderQuickCashButtons() {
-        const total = Number({{ (float) $sale->total_pembayaran }});
+        const total = getCheckoutTotal();
         const row = document.getElementById('quickCashRow');
         if (!row) return;
 
@@ -1253,7 +1299,7 @@
     }
 
     function calculateChange() {
-        const total = Number({{ (float) $sale->total_pembayaran }});
+        const total = getCheckoutTotal();
         const cash = Number(document.getElementById('cashAmountInput').value) || 0;
         const change = cash - total;
 
@@ -1278,14 +1324,14 @@
             number: "{{ $bcaNumber }}",
             cleanNumber: "{{ $bcaNumberClean }}",
             holder: "{{ $bcaHolder }}",
-            qrUrl: "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=TRANSFER-BCA-{{ $bcaNumberClean }}-TOTAL-{{ $sale->total_pembayaran }}"
+            qrUrl: "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=TRANSFER-BCA-{{ $bcaNumberClean }}-TOTAL-{{ $netTotal }}"
         },
         MANDIRI: {
             name: "Bank Mandiri",
             number: "{{ $mandiriNumber }}",
             cleanNumber: "{{ $mandiriNumberClean }}",
             holder: "{{ $mandiriHolder }}",
-            qrUrl: "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=TRANSFER-MANDIRI-{{ $mandiriNumberClean }}-TOTAL-{{ $sale->total_pembayaran }}"
+            qrUrl: "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=TRANSFER-MANDIRI-{{ $mandiriNumberClean }}-TOTAL-{{ $netTotal }}"
         }
     };
 
@@ -1337,7 +1383,7 @@
     }
 
     function copyTransferAmount() {
-        const total = Number({{ (float) $sale->total_pembayaran }});
+        const total = getCheckoutTotal();
         navigator.clipboard.writeText(String(total)).then(() => {
             const btn = event.currentTarget;
             const original = btn.innerHTML;
@@ -1371,7 +1417,7 @@
 
     function handleCheckout() {
         const method = document.getElementById('paymentMethodSelect').value;
-        const total = Number({{ (float) $sale->total_pembayaran }});
+        const total = getCheckoutTotal();
         const cash = Number(document.getElementById('cashAmountInput').value) || 0;
 
         if (!method) {
@@ -1428,6 +1474,10 @@
     document.addEventListener("DOMContentLoaded", () => {
         toggleCashInput();
         renderQuickCashButtons();
+        document.getElementById('discountInput')?.addEventListener('input', () => {
+            updateDiscountSummary();
+            renderQuickCashButtons();
+        });
     });
 </script>
 

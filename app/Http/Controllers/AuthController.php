@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Str;
 use App\Http\Requests\LoginRequest;
@@ -21,7 +22,18 @@ class AuthController extends Controller
 
     public function auth(LoginRequest $request)
     {
+        $throttleKey = Str::transliterate(Str::lower($request->input('email')) . '|' . $request->ip());
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 3)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+
+            return back()->withInput($request->only('email'))->withErrors([
+                'email' => "Terlalu banyak percobaan login. Silakan tunggu {$seconds} detik."
+            ])->with('login_lock_seconds', $seconds);
+        }
+
         if (Auth::attempt($request->validated())) {
+            RateLimiter::clear($throttleKey);
 
             $request->session()->regenerate();
 
@@ -29,9 +41,20 @@ class AuthController extends Controller
                 ->with('success', 'Selamat Datang, ' . Auth::user()->name);
         }
 
+        RateLimiter::hit($throttleKey, 60);
+        $attemptsLeft = max(0, 3 - RateLimiter::attempts($throttleKey));
+
+        if ($attemptsLeft === 0) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+
+            return back()->withInput($request->only('email'))->withErrors([
+                'email' => "Email atau password salah 3 kali. Silakan tunggu {$seconds} detik."
+            ])->with('login_lock_seconds', $seconds);
+        }
+
         return back()->withErrors([
-            'email' => 'Email atau password tidak valid'
-        ]);
+            'email' => "Email atau password tidak valid. Sisa percobaan: {$attemptsLeft}."
+        ])->withInput($request->only('email'));
     }
 
     public function register(Request $request)

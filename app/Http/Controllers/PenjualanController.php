@@ -168,7 +168,8 @@ class PenjualanController extends Controller
     {
         // Validasi metode pembayaran
         $request->validate([
-            'payment_method' => 'required|in:CASH,QRIS,TRANSFER'
+            'payment_method' => 'required|in:CASH,QRIS,TRANSFER',
+            'diskon'         => 'nullable|integer|min:0',
         ]);
 
         // Pastikan transaksi masih OPEN
@@ -199,11 +200,19 @@ class PenjualanController extends Controller
                 }
 
                 // 2. Hitung total transaksi
-                $total = $penjualan->itemPenjualan()->sum('subtotal');
+                $subtotal = $penjualan->itemPenjualan()->sum('subtotal');
+                $diskon = (int) ($request->input('diskon') ?? 0);
+
+                if ($diskon > $subtotal) {
+                    throw new Exception('Diskon tidak boleh lebih besar dari subtotal belanja.');
+                }
+
+                $total = $subtotal - $diskon;
 
                 // 3. Update status transaksi
                 $penjualan->update([
                     'metode_pembayaran' => $request->payment_method,
+                    'diskon'            => $diskon,
                     'total_pembayaran'  => $total,
                     'status'            => 'COMPLETED',
                 ]);
