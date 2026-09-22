@@ -279,7 +279,6 @@
                     <li><i class="bi bi-check-circle-fill me-2" style="color: #7c3aed;"></i>Manajemen stok otomatis</li>
                     <li><i class="bi bi-check-circle-fill me-2" style="color: #7c3aed;"></i>Pencatatan pelanggan & penjualan</li>
                     <li><i class="bi bi-check-circle-fill me-2" style="color: #7c3aed;"></i>Laporan harian dan bulanan</li>
-                    <li><i class="bi bi-check-circle-fill me-2" style="color: #7c3aed;"></i>Antarmuka yang user-friendly</li>
                 </ul>
             </div>
         </div>

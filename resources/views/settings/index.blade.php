@@ -217,7 +217,7 @@
                     </div>
                 </div>
                 <h1 class="fw-bold text-white mb-2 fs-2">
-                    Tampilan & Cetak Nota
+                    Pengaturan
                 </h1>
                 <p class="text-white-50 mb-0 fs-6">Sesuaikan header, footer, rekening bank, ukuran kertas, dan informasi toko pada struk belanja.</p>
             </div>

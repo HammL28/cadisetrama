@@ -94,20 +94,28 @@
     /* Ukuran @page diatur secara dinamis lewat JavaScript (lihat script di bawah),
        karena "auto" untuk tinggi kertas tidak konsisten di semua browser/driver. */
     @media print {
+        @page {
+            size: {{ $paperSize }} auto;
+            margin: 0 !important;
+        }
+
         html, body {
             width: {{ $paperSize }} !important;
             min-width: {{ $paperSize }} !important;
             max-width: {{ $paperSize }} !important;
-            margin: 0 auto !important;
+            margin: 0 !important;
             padding: 0 !important;
             background: #ffffff !important;
-            display: flex !important;
-            justify-content: center !important;
+            overflow: hidden !important;
         }
 
         * {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
+        }
+
+        body * {
+            visibility: hidden !important;
         }
 
         .container-web-view,
@@ -117,19 +125,30 @@
             display: none !important;
         }
 
+        #receipt-print-area,
+        #receipt-print-area * {
+            visibility: visible !important;
+        }
+
         #receipt-print-area {
             display: block !important;
-            position: relative !important;
-            width: 100% !important;
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: {{ $paperSize }} !important;
             max-width: {{ $paperSize }} !important;
-            margin: 0 auto !important;
-            padding: 4mm 3.5mm !important;
+            min-width: {{ $paperSize }} !important;
+            margin: 0 !important;
+            padding: 2.5mm 3mm !important;
             background: #ffffff !important;
             font-family: 'Courier New', Courier, monospace !important;
-            font-size: 13px !important;
-            line-height: 1.45 !important;
+            font-size: 11.5px !important;
+            line-height: 1.3 !important;
             box-sizing: border-box !important;
             overflow-wrap: anywhere !important;
+            color: #000000 !important;
+            page-break-inside: avoid !important;
+            box-shadow: none !important;
         }
 
         #receipt-print-area table {
@@ -186,10 +205,12 @@
                 </h2>
                 <p class="text-white opacity-75 small mb-0">Informasi rincian transaksi dan daftar barang yang dibeli.</p>
             </div>
-           
+
+            <div class="d-flex flex-wrap gap-2">
                 <a href="{{ route('penjualan.index') }}" class="btn btn-outline-light rounded-pill px-4 fw-semibold shadow-sm d-flex align-items-center gap-1">
                     <i class="bi bi-arrow-left"></i> Kembali
                 </a>
+        
             </div>
         </div>
     </div>
@@ -202,7 +223,7 @@
                         <h5 class="fw-bold mb-4 text-purple d-flex align-items-center gap-2">
                             <i class="bi bi-info-circle-fill"></i> Ringkasan Transaksi
                         </h5>
-                        
+
                         <div class="mb-3">
                             <label class="text-muted small d-block">ID Transaksi</label>
                             <span class="fw-bold text-dark fs-6">#{{ $penjualan->id }}</span>
@@ -243,14 +264,13 @@
 
                     <div class="text-center pt-2">
                         <div class="qr-container shadow-sm mb-2">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data={{ urlencode(route('penjualan.show', $penjualan->id)) }}" 
-                                 alt="QR Code Transaksi #{{ $penjualan->id }}" 
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data={{ urlencode(route('penjualan.show', $penjualan->id)) }}"
+                                 alt="QR Code Transaksi #{{ $penjualan->id }}"
                                  class="img-fluid"
                                  width="130" height="130">
                         </div>
                         <span class="d-block text-muted small fw-medium">Scan untuk verifikasi resi</span>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -411,43 +431,13 @@
 
 <script>
     (function () {
-        var paperWidth = "{{ $paperSize }}"; // contoh: "58mm" atau "80mm"
-        var dynamicStyleId = "dynamic-print-page-size";
-
-        function setDynamicPageSize() {
-            var area = document.getElementById('receipt-print-area');
-            if (!area) return;
-
-            // Tampilkan sementara di posisi tak terlihat supaya scrollHeight
-            // terukur dengan benar (elemen aslinya display:none di layar biasa).
-            var prevDisplay = area.style.display;
-            var prevPosition = area.style.position;
-            var prevVisibility = area.style.visibility;
-
-            area.style.display = 'block';
-            area.style.position = 'absolute';
-            area.style.visibility = 'hidden';
-            area.style.width = paperWidth;
-
-            var heightPx = area.scrollHeight;
-            // px -> mm (96 dpi), plus sedikit padding pengaman
-            var heightMm = Math.ceil((heightPx / 96) * 25.4) + 8;
-
-            area.style.display = prevDisplay;
-            area.style.position = prevPosition;
-            area.style.visibility = prevVisibility;
-
-            var styleTag = document.getElementById(dynamicStyleId);
-            if (!styleTag) {
-                styleTag = document.createElement('style');
-                styleTag.id = dynamicStyleId;
-                document.head.appendChild(styleTag);
-            }
-            styleTag.innerHTML =
-                '@media print { @page { size: ' + paperWidth + ' ' + heightMm + 'mm; margin: 0; } }';
-        }
-
-        window.addEventListener('beforeprint', setDynamicPageSize);
+        @if(request()->query('print') === '1')
+            window.addEventListener('load', function () {
+                setTimeout(function () {
+                    window.print();
+                }, 250);
+            });
+        @endif
     })();
 </script>
 

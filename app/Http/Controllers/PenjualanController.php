@@ -169,7 +169,8 @@ class PenjualanController extends Controller
         // Validasi metode pembayaran
         $request->validate([
             'payment_method' => 'required|in:CASH,QRIS,TRANSFER',
-            'diskon'         => 'nullable|integer|min:0',
+            'diskon'         => 'nullable|numeric|min:0',
+            'discount_type' => 'nullable|in:nominal,percent',
         ]);
 
         // Pastikan transaksi masih OPEN
@@ -201,7 +202,15 @@ class PenjualanController extends Controller
 
                 // 2. Hitung total transaksi
                 $subtotal = $penjualan->itemPenjualan()->sum('subtotal');
-                $diskon = (int) ($request->input('diskon') ?? 0);
+                $type = $request->input('discount_type', 'nominal');
+                $diskonInput = (float) ($request->input('diskon') ?? 0);
+
+                if ($type === 'percent') {
+                    $diskonPersen = min(max($diskonInput, 0), 100);
+                    $diskon = $subtotal * ($diskonPersen / 100);
+                } else {
+                    $diskon = min(max($diskonInput, 0), $subtotal);
+                }
 
                 if ($diskon > $subtotal) {
                     throw new Exception('Diskon tidak boleh lebih besar dari subtotal belanja.');
@@ -212,8 +221,8 @@ class PenjualanController extends Controller
                 // 3. Update status transaksi
                 $penjualan->update([
                     'metode_pembayaran' => $request->payment_method,
-                    'diskon'            => $diskon,
-                    'total_pembayaran'  => $total,
+                    'diskon'            => round($diskon),
+                    'total_pembayaran'  => round($total),
                     'status'            => 'COMPLETED',
                 ]);
 

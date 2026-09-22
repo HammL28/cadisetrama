@@ -14603,3 +14603,148 @@ Did you mean one of these?
 [2026-09-20 20:44:54] local.INFO: Settings updated successfully for User ID: 1  
 [2026-09-21 23:27:16] local.INFO: Sending stock notification to user ID: 1  
 [2026-09-21 23:27:16] local.INFO: Sending stock notification to user ID: 2  
+[2026-09-22 08:11:47] local.ERROR: Uncaught ReflectionException: Class "App\Http\Middleware\SetLanguage" does not exist in Command line code:1
+Stack trace:
+#0 Command line code(1): ReflectionMethod->__construct()
+#1 {main}
+  thrown {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Uncaught ReflectionException: Class \"App\\Http\\Middleware\\SetLanguage\" does not exist in Command line code:1
+Stack trace:
+#0 Command line code(1): ReflectionMethod->__construct()
+#1 {main}
+  thrown at Command line code:1)
+[stacktrace]
+#0 {main}
+"} 
+[2026-09-22 08:11:47] local.ERROR: Uncaught InvalidArgumentException: Please provide a valid cache path. in C:\laragon\www\cadisetrama\vendor\laravel\framework\src\Illuminate\View\Compilers\Compiler.php:75
+Stack trace:
+#0 C:\laragon\www\cadisetrama\vendor\laravel\framework\src\Illuminate\View\ViewServiceProvider.php(97): Illuminate\View\Compilers\Compiler->__construct()
+#1 C:\laragon\www\cadisetrama\vendor\laravel\framework\src\Illuminate\Container\Container.php(1115): Illuminate\View\ViewServiceProvider->{closure:Illuminate\View\ViewServiceProvider::registerBladeCompiler():96}()
+#2 C:\laragon\www\cadisetrama\vendor\laravel\framework\src\Illuminate\Container\Container.php(933): Illuminate\Container\Container->build()
+#3 C:\laragon\www\cadisetrama\vendor\laravel\framework\src\Illuminate\Foundation\Application.php(1078): Illuminate\Container\Container->resolve()
+#4 C:\laragon\www\cadisetrama\vendor\laravel\framework\src\Illuminate\Container\Container.php(864): Illuminate\Foundation\Application->resolve()
+#5 C:\laragon\www\cadisetrama\vendor\laravel\framework\src\Illuminate\Foundation\Application.php(1058): Illuminate\Container\Container->make()
+#6 C:\laragon\www\cadisetrama\vendor\laravel\framework\src\Illuminate\Foundation\helpers.php(138): Illuminate\Foundation\Application->make()
+#7 Command line code(1): app()
+#8 {main}
+  thrown {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Uncaught InvalidArgumentException: Please provide a valid cache path. in C:\\laragon\\www\\cadisetrama\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Compilers\\Compiler.php:75
+Stack trace:
+#0 C:\\laragon\\www\\cadisetrama\\vendor\\laravel\\framework\\src\\Illuminate\\View\\ViewServiceProvider.php(97): Illuminate\\View\\Compilers\\Compiler->__construct()
+#1 C:\\laragon\\www\\cadisetrama\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(1115): Illuminate\\View\\ViewServiceProvider->{closure:Illuminate\\View\\ViewServiceProvider::registerBladeCompiler():96}()
+#2 C:\\laragon\\www\\cadisetrama\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(933): Illuminate\\Container\\Container->build()
+#3 C:\\laragon\\www\\cadisetrama\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1078): Illuminate\\Container\\Container->resolve()
+#4 C:\\laragon\\www\\cadisetrama\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php(864): Illuminate\\Foundation\\Application->resolve()
+#5 C:\\laragon\\www\\cadisetrama\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1058): Illuminate\\Container\\Container->make()
+#6 C:\\laragon\\www\\cadisetrama\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\helpers.php(138): Illuminate\\Foundation\\Application->make()
+#7 Command line code(1): app()
+#8 {main}
+  thrown at C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/View/Compilers/Compiler.php:75)
+[stacktrace]
+#0 {main}
+"} 
+[2026-09-22 08:12:25] local.ERROR: Please provide a valid cache path. {"exception":"[object] (InvalidArgumentException(code: 0): Please provide a valid cache path. at C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/View/Compilers/Compiler.php:75)
+[stacktrace]
+#0 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/View/ViewServiceProvider.php(97): Illuminate/View/Compilers/Compiler->__construct()
+#1 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Container/Container.php(1115): Illuminate/View/ViewServiceProvider->{closure:Illuminate/View/ViewServiceProvider::registerBladeCompiler():96}()
+#2 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Container/Container.php(933): Illuminate/Container/Container->build()
+#3 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1078): Illuminate/Container/Container->resolve()
+#4 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Container/Container.php(864): Illuminate/Foundation/Application->resolve()
+#5 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1058): Illuminate/Container/Container->make()
+#6 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/View/ViewServiceProvider.php(169): Illuminate/Foundation/Application->make()
+#7 [internal function]: Illuminate/View/ViewServiceProvider->{closure:Illuminate/View/ViewServiceProvider::registerBladeEngine():165}()
+#8 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/View/Engines/EngineResolver.php(55): call_user_func()
+#9 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/View/Factory.php(325): Illuminate/View/Engines/EngineResolver->resolve()
+#10 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/View/Factory.php(287): Illuminate/View/Factory->getEngineFromPath()
+#11 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/View/Factory.php(159): Illuminate/View/Factory->viewInstance()
+#12 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php(1100): Illuminate/View/Factory->make()
+#13 C:/laragon/www/cadisetrama/app/Http/Controllers/AuthController.php(20): view()
+#14 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(46): App/Http/Controllers/AuthController->index()
+#15 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Routing/Route.php(265): Illuminate/Routing/ControllerDispatcher->dispatch()
+#16 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Routing/Route.php(211): Illuminate/Routing/Route->runController()
+#17 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Routing/Router.php(822): Illuminate/Routing/Route->run()
+#18 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(180): Illuminate/Routing/Router->{closure:Illuminate/Routing/Router::runRouteWithinStack():821}()
+#19 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Auth/Middleware/RedirectIfAuthenticated.php(47): Illuminate/Pipeline/Pipeline->{closure:Illuminate/Pipeline/Pipeline::prepareDestination():178}()
+#20 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Auth/Middleware/RedirectIfAuthenticated->handle()
+#21 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}()
+#22 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Routing/Middleware/SubstituteBindings->handle()
+#23 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/VerifyCsrfToken.php(87): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}()
+#24 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Foundation/Http/Middleware/VerifyCsrfToken->handle()
+#25 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/View/Middleware/ShareErrorsFromSession.php(48): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}()
+#26 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/View/Middleware/ShareErrorsFromSession->handle()
+#27 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(120): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}()
+#28 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(63): Illuminate/Session/Middleware/StartSession->handleStatefulRequest()
+#29 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Session/Middleware/StartSession->handle()
+#30 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/AddQueuedCookiesToResponse.php(36): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}()
+#31 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Cookie/Middleware/AddQueuedCookiesToResponse->handle()
+#32 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/EncryptCookies.php(74): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}()
+#33 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Cookie/Middleware/EncryptCookies->handle()
+#34 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(137): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}()
+#35 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Routing/Router.php(821): Illuminate/Pipeline/Pipeline->then()
+#36 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Routing/Router.php(800): Illuminate/Routing/Router->runRouteWithinStack()
+#37 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Routing/Router.php(764): Illuminate/Routing/Router->runRoute()
+#38 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Routing/Router.php(753): Illuminate/Routing/Router->dispatchToRoute()
+#39 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate/Routing/Router->dispatch()
+#40 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(180): Illuminate/Foundation/Http/Kernel->{closure:Illuminate/Foundation/Http/Kernel::dispatchToRouter():197}()
+#41 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->{closure:Illuminate/Pipeline/Pipeline::prepareDestination():178}()
+#42 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle()
+#43 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull->handle()
+#44 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}()
+#45 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(51): Illuminate/Foundation/Http/Middleware/TransformsRequest->handle()
+#46 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Foundation/Http/Middleware/TrimStrings->handle()
+#47 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePostSize.php(27): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}()
+#48 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Http/Middleware/ValidatePostSize->handle()
+#49 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(109): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}()
+#50 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance->handle()
+#51 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(61): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}()
+#52 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Http/Middleware/HandleCors->handle()
+#53 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(58): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}()
+#54 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Http/Middleware/TrustProxies->handle()
+#55 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks.php(22): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}()
+#56 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks->handle()
+#57 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePathEncoding.php(26): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}()
+#58 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(219): Illuminate/Http/Middleware/ValidatePathEncoding->handle()
+#59 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(137): Illuminate/Pipeline/Pipeline->{closure:{closure:Illuminate/Pipeline/Pipeline::carry():194}:195}()
+#60 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate/Pipeline/Pipeline->then()
+#61 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate/Foundation/Http/Kernel->sendRequestThroughRouter()
+#62 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1220): Illuminate/Foundation/Http/Kernel->handle()
+#63 C:/laragon/www/cadisetrama/public/index.php(20): Illuminate/Foundation/Application->handleRequest()
+#64 C:/laragon/www/cadisetrama/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('...')
+#65 {main}
+"} 
+[2026-09-22 08:15:01] local.INFO: Updating settings for User ID: 1  
+[2026-09-22 08:15:01] local.INFO: Settings updated successfully for User ID: 1  
+[2026-09-22 08:18:25] local.INFO: Updating settings for User ID: 1  
+[2026-09-22 08:18:25] local.INFO: Settings updated successfully for User ID: 1  
+[2026-09-22 08:27:44] local.INFO: Updating settings for User ID: 1  
+[2026-09-22 08:27:44] local.INFO: Settings updated successfully for User ID: 1  
+[2026-09-22 08:29:03] local.INFO: Sending stock notification to user ID: 1  
+[2026-09-22 08:29:03] local.INFO: Sending stock notification to user ID: 2  
+[2026-09-22 08:33:31] local.INFO: Updating settings for User ID: 1  
+[2026-09-22 08:33:31] local.INFO: Settings updated successfully for User ID: 1  
+[2026-09-22 08:33:56] local.INFO: Updating settings for User ID: 1  
+[2026-09-22 08:33:56] local.INFO: Settings updated successfully for User ID: 1  
+[2026-09-22 08:35:18] local.INFO: Updating settings for User ID: 1  
+[2026-09-22 08:35:18] local.INFO: Settings updated successfully for User ID: 1  
+[2026-09-22 08:35:44] local.INFO: Updating settings for User ID: 1  
+[2026-09-22 08:35:44] local.INFO: Settings updated successfully for User ID: 1  
+[2026-09-22 08:35:51] local.INFO: Updating settings for User ID: 1  
+[2026-09-22 08:35:51] local.INFO: Settings updated successfully for User ID: 1  
+[2026-09-22 08:37:25] local.INFO: Sending stock notification to user ID: 1  
+[2026-09-22 08:37:25] local.INFO: Sending stock notification to user ID: 2  
+[2026-09-22 08:38:12] local.INFO: Sending stock notification to user ID: 1  
+[2026-09-22 08:38:12] local.INFO: Sending stock notification to user ID: 2  
+[2026-09-22 08:39:15] local.INFO: Updating settings for User ID: 1  
+[2026-09-22 08:39:15] local.INFO: Settings updated successfully for User ID: 1  
+[2026-09-22 08:46:55] local.INFO: Updating settings for User ID: 1  
+[2026-09-22 08:46:55] local.INFO: Settings updated successfully for User ID: 1  
+[2026-09-22 09:02:24] local.INFO: Updating settings for User ID: 1  
+[2026-09-22 09:02:24] local.INFO: Settings updated successfully for User ID: 1  
+[2026-09-22 09:02:35] local.INFO: Updating settings for User ID: 1  
+[2026-09-22 09:02:35] local.INFO: Settings updated successfully for User ID: 1  
+[2026-09-22 09:03:58] local.INFO: Updating settings for User ID: 1  
+[2026-09-22 09:03:58] local.INFO: Settings updated successfully for User ID: 1  
+[2026-09-22 09:21:55] local.INFO: Sending stock notification to user ID: 1  
+[2026-09-22 09:21:55] local.INFO: Sending stock notification to user ID: 2  
+[2026-09-22 09:37:16] local.INFO: Updating settings for User ID: 1  
+[2026-09-22 09:37:16] local.INFO: Settings updated successfully for User ID: 1  
+[2026-09-22 10:38:53] local.INFO: Sending stock notification to user ID: 1  
+[2026-09-22 10:38:54] local.INFO: Sending stock notification to user ID: 2  

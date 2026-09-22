@@ -23,7 +23,7 @@ class PenjualanSeeder extends Seeder
                  ->each(function ($penjualan) {
 
                      $items = ItemPenjualan::factory()
-                        ->count(rand(1, 5))
+                        ->count(rand(0, 0))
                         ->make([
                             'penjualan_id' => $penjualan->id,
                         ]);

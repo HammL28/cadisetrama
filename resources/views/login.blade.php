@@ -418,8 +418,8 @@
                 <div class="branding-icon-wrapper">
                     <i class="bi bi-shop"></i>
                 </div>
-                <div class="branding-badge">
-                    <i class="bi bi-cpu-fill"></i> Smart Cashier POS
+                <div class="">
+                 
                 </div>
                 <h1 class="branding-title">POINT <span>OF SALE</span></h1>
                 <p class="branding-subtitle">Kelola transaksi, stok barang, dan laporan penjualan bisnis Anda secara otomatis & akurat.</p>
@@ -482,7 +482,7 @@
                                value="{{ old('email') }}"
                                class="form-control @error('email') is-invalid @enderror" 
                                id="email" 
-                               placeholder="kasir@email.com" 
+                               placeholder="kasir@gmail.com" 
                                required 
                                autofocus>
                         <i class="bi bi-envelope input-icon"></i>
@@ -534,7 +534,7 @@
 
                 <div class="d-grid">
                     <button type="submit" class="btn btn-gradient-login d-flex align-items-center justify-content-center gap-2" id="loginButton">
-                        <span>Buka Sesi Kasir</span>
+                        <span>Konfirmasi</span>
                         <div class="loading-spinner"></div>
                         <i class="bi bi-arrow-right-circle-fill fs-5"></i>
                     </button>
@@ -552,7 +552,7 @@
     </div>
 </div>
 
-<!-- Modal Lupa Sandi -->
+<!-- Lupa Sandi -->
 <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 24px; overflow: hidden;">

@@ -13,7 +13,7 @@ class UserSeeder extends Seeder
         // Account Admin (role_id = 1)
         User::create([
             'name'     => 'Muhammad Ilham',
-            'email'    => 'daniel@gmail.com',
+            'email'    => 'muhammadilham@gmail.com',
             'password' => Hash::make('12345678'),
             'role_id'  => 1,
         ]);
@@ -21,7 +21,7 @@ class UserSeeder extends Seeder
         // Account Kasir (role_id = 2)
         User::create([
             'name'     => 'Ilham',
-            'email'    => 'kasir@gmail.com',
+            'email'    => 'ilham@gmail.com',
             'password' => Hash::make('password123'),
             'role_id'  => 2,
         ]);

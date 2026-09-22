@@ -605,42 +605,72 @@
     }
 
     @media print {
+        @page {
+            size: {{ $receiptPaperSize }} auto;
+            margin: 0 !important;
+        }
+
+        html, body {
+            width: {{ $receiptPaperSize }} !important;
+            min-width: {{ $receiptPaperSize }} !important;
+            max-width: {{ $receiptPaperSize }} !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #ffffff !important;
+            overflow: hidden !important;
+        }
+
         body * {
-            visibility: hidden;
+            visibility: hidden !important;
         }
-        #receipt-print, #receipt-print * {
-            visibility: visible;
+
+        #receipt-print,
+        #receipt-print * {
+            visibility: visible !important;
         }
+
         #receipt-print {
             display: block !important;
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: {{ $receiptPaperSize }};
-            max-width: {{ $receiptPaperSize }};
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: {{ $receiptPaperSize }} !important;
+            max-width: {{ $receiptPaperSize }} !important;
+            min-width: {{ $receiptPaperSize }} !important;
             box-sizing: border-box;
-            padding: 3mm;
+            padding: 2.5mm 3mm !important;
             font-family: 'Courier New', Courier, monospace;
-            font-size: 11px;
-            line-height: 1.35;
+            font-size: 10.5px;
+            line-height: 1.3;
             color: #000;
             background: #fff;
+            page-break-inside: avoid !important;
+            margin: 0 !important;
+            box-shadow: none !important;
         }
+
         #receipt-print table {
+            width: 100% !important;
             table-layout: fixed;
             word-break: break-word;
+            border-collapse: collapse;
         }
+
         #receipt-print td {
             vertical-align: top;
+            padding: 1px 0;
         }
+
         .receipt-dashed {
             border-top: 1px dashed #000;
             margin: 6px 0;
         }
+
         .receipt-table {
             width: 100%;
             border-collapse: collapse;
         }
+
         .receipt-table td {
             padding: 2px 0;
         }
@@ -852,8 +882,13 @@
                             <strong id="subtotalDisplay">Rp {{ number_format($grossTotal, 0, ',', '.') }}</strong>
                         </div>
                         <div class="input-group input-group-sm mb-2">
-                            <span class="input-group-text bg-white border-end-0">Diskon Rp</span>
-                            <input type="number" id="discountInput" name="diskon" form="checkoutForm" class="form-control border-start-0 text-end" min="0" max="{{ $grossTotal }}" value="{{ $discount }}" placeholder="0" {{ $sale->status === 'COMPLETED' ? 'disabled' : '' }}>
+                            <span class="input-group-text bg-white border-end-0">Diskon</span>
+                            <select id="discountType" class="form-select form-select-sm border-start-0 border-end-0" style="max-width: 90px;" {{ $sale->status === 'COMPLETED' ? 'disabled' : '' }}>
+                                <option value="nominal">Rp</option>
+                                <option value="percent">%</option>
+                            </select>
+                            <input type="number" id="discountInput" name="diskon" form="checkoutForm" class="form-control border-start-0 text-end" min="0" step="0.01" value="{{ $discount }}" placeholder="0" {{ $sale->status === 'COMPLETED' ? 'disabled' : '' }}>
+                            <input type="hidden" id="discountTypeHidden" name="discount_type" value="nominal">
                         </div>
                         <div class="d-flex justify-content-between align-items-center border-top pt-2">
                             <span class="text-muted small text-uppercase fw-bold" style="letter-spacing: 0.5px;">Total Bayar</span>
@@ -1223,17 +1258,43 @@
 
     function getCheckoutTotal() {
         const subtotal = Number({{ (float) $grossTotal }});
-        const discount = Math.min(Math.max(Number(document.getElementById('discountInput')?.value) || 0, 0), subtotal);
+        const discountType = document.getElementById('discountType')?.value || 'nominal';
+        const rawValue = Number(document.getElementById('discountInput')?.value || 0);
+
+        let discount = 0;
+        if (discountType === 'percent') {
+            const percent = Math.min(Math.max(rawValue, 0), 100);
+            discount = subtotal * (percent / 100);
+        } else {
+            discount = Math.min(Math.max(rawValue, 0), subtotal);
+        }
+
         return subtotal - discount;
     }
 
     function updateDiscountSummary() {
         const discountInput = document.getElementById('discountInput');
+        const discountType = document.getElementById('discountType')?.value || 'nominal';
+        const discountTypeHidden = document.getElementById('discountTypeHidden');
         const subtotal = Number({{ (float) $grossTotal }});
-        const discount = Math.min(Math.max(Number(discountInput.value) || 0, 0), subtotal);
+        const rawValue = Number(discountInput.value || 0);
+
+        if (discountTypeHidden) {
+            discountTypeHidden.value = discountType;
+        }
+
+        let discount = 0;
+        if (discountType === 'percent') {
+            const percent = Math.min(Math.max(rawValue, 0), 100);
+            discountInput.value = percent;
+            discount = subtotal * (percent / 100);
+        } else {
+            discount = Math.min(Math.max(rawValue, 0), subtotal);
+            discountInput.value = discount;
+        }
+
         const total = subtotal - discount;
 
-        discountInput.value = discount;
         document.getElementById('totalDisplay').textContent = 'Rp ' + total.toLocaleString('id-ID');
         const qrisTotal = document.getElementById('qrisTotalDisplay');
         if (qrisTotal) qrisTotal.textContent = 'Rp ' + total.toLocaleString('id-ID');
@@ -1474,7 +1535,24 @@
     document.addEventListener("DOMContentLoaded", () => {
         toggleCashInput();
         renderQuickCashButtons();
-        document.getElementById('discountInput')?.addEventListener('input', () => {
+
+        const discountType = document.getElementById('discountType');
+        const discountInput = document.getElementById('discountInput');
+
+        if (discountType) {
+            discountType.addEventListener('change', () => {
+                const currentValue = Number(discountInput?.value || 0);
+                if (discountType.value === 'percent') {
+                    discountInput.value = Math.min(Math.max(currentValue, 0), 100);
+                } else {
+                    discountInput.value = Math.min(Math.max(currentValue, 0), Number({{ (float) $grossTotal }}));
+                }
+                updateDiscountSummary();
+                renderQuickCashButtons();
+            });
+        }
+
+        discountInput?.addEventListener('input', () => {
             updateDiscountSummary();
             renderQuickCashButtons();
         });
